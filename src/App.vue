@@ -16,15 +16,43 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
+    <button @click="buttonfunc">test</button>
   </div>
 </template>
 
 <script>
+
+function getCurrentTab(callback) {
+  // Query filter to be passed to chrome.tabs.query - see
+  // https://developer.chrome.com/extensions/tabs#method-query
+  var queryInfo = {
+    active: true,
+    currentWindow: true
+  };
+
+  chrome.tabs.query(queryInfo, (tabs) => {
+    var tab = tabs[0];
+    var url = tab.url;
+    callback(tab);
+  });
+
+}
+
 export default {
   name: 'app',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
+    }
+  },
+  methods: {
+    buttonfunc: function () {
+//    alert("test")
+
+      getCurrentTab(function(tab){
+        alert(chrome.runtime.id);
+      });
+
     }
   }
 }

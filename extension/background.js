@@ -30,36 +30,36 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 
-chrome.browserAction.onClicked.addListener(function() {
+// chrome.browserAction.onClicked.addListener(function() {
+//
+//   getCurrentTab(function(tab){
+// //    alert("" + tab.id + " " + tab.url);
+// //  alert(chrome.runtime.id);
+//
+//     chrome.tabs.create({url: "index.html"});
+//   });
+// });
 
-  getCurrentTab(function(tab){
-//    alert("" + tab.id + " " + tab.url);
-//  alert(chrome.runtime.id);
 
-    chrome.tabs.create({url: "index.html"});
-  });
-});
-
-
-
-/**
- * Get the current tab.
- *
- * @param {function(tab)} callback called when the URL of the current tab
- *   is found.
- */
-function getCurrentTab(callback) {
-  // Query filter to be passed to chrome.tabs.query - see
-  // https://developer.chrome.com/extensions/tabs#method-query
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
-
-  chrome.tabs.query(queryInfo, (tabs) => {
-    var tab = tabs[0];
-    var url = tab.url;
-    callback(tab);
-  });
-
-}
+//
+// /**
+//  * Get the current tab.
+//  *
+//  * @param {function(tab)} callback called when the URL of the current tab
+//  *   is found.
+//  */
+// function getCurrentTab(callback) {
+//   // Query filter to be passed to chrome.tabs.query - see
+//   // https://developer.chrome.com/extensions/tabs#method-query
+//   var queryInfo = {
+//     active: true,
+//     currentWindow: true
+//   };
+//
+//   chrome.tabs.query(queryInfo, (tabs) => {
+//     var tab = tabs[0];
+//     var url = tab.url;
+//     callback(tab);
+//   });
+//
+// }
