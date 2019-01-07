@@ -31,13 +31,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
 
 // chrome.browserAction.onClicked.addListener(function() {
-//
-//   getCurrentTab(function(tab){
-// //    alert("" + tab.id + " " + tab.url);
-// //  alert(chrome.runtime.id);
-//
-//     chrome.tabs.create({url: "index.html"});
-//   });
+//   chrome.tabs.create({url: "index.html"});
 // });
 
 
