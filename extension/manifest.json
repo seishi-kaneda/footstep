@@ -1,6 +1,6 @@
 {
   "name": "FootStep",
-  "description": "This is a support extension for your daily work.",
+  "description": "Test Version. This is a support extension for your daily work.",
   "version": "1.0",
   "manifest_version": 2,
   "permissions": ["alarms", "tabs"],
