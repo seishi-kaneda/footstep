@@ -43,14 +43,11 @@ export default {
 
       getCurrentTab(function(tab){
         var dailyitems;
-        alert(localStorage.getItem("dailyitems"));
         if (localStorage.getItem("dailyitems")) {
           dailyitems = JSON.parse(localStorage.getItem("dailyitems"));
         } else {
           dailyitems = [];
         }
-
-//        alert(dailyitems);
 
         var nowDate = new Date();
 
@@ -65,9 +62,6 @@ export default {
 
         localStorage.setItem("dailyitems", JSON.stringify(dailyitems));
 
-
-
-//        alert(localStorage.counter++);
       });
 
     },
@@ -102,6 +96,11 @@ function getCurrentTab(callback) {
 </script>
 
 <style>
+body {
+  max-width: 415px;
+  min-width: 380px;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
