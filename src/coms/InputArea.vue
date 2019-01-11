@@ -1,65 +1,65 @@
 <template>
   <div>
     <button @click="btFootStamp">フットスタンプ</button>
+    <input v-model="inputTitle">
+{{ inputTitle }}
+<!--
+    <textarea v-model="inputMemo" placeholder="memo"></textarea>
+-->
   </div>
 </template>
 
 <script>
 
+import FootStepUtils from '../mixins/FootStepUtils';
+
+
 export default {
   name: 'InputArea',
+  mixins: [ FootStepUtils ],
   data() {
     return {
-      listdata: JSON.parse(localStorage.dailyitems)
+      inputTitle: 'Welcome to Your Vue.js App'
     }
+  },
+  created () {
+    // getCurrentTab(function(tab){
+    //   this.inputTitle = tab.title;
+    // });
   },
   methods: {
     btFootStamp: function () {
-      getCurrentTab(function(tab){
-        var dailyitems;
-        if (localStorage.getItem("dailyitems")) {
-          dailyitems = JSON.parse(localStorage.getItem("dailyitems"));
-        } else {
-          dailyitems = [];
-        }
-
-        var nowDate = new Date();
-
-        console.log("フットスタンプ:");
-        console.log(JSON.stringify(tab));
-
-        var item = {
-          time: nowDate.getTime()
-          , title:tab.title
-          , url: tab.url
-          , favIconUrl: tab.favIconUrl
-        }
-
-        dailyitems.push(item);
-
-        localStorage.setItem("dailyitems", JSON.stringify(dailyitems));
-
-      });
+      // getCurrentTab(function(tab){
+      //   var dailyitems;
+      //   if (localStorage.getItem("dailyitems")) {
+      //     dailyitems = JSON.parse(localStorage.getItem("dailyitems"));
+      //   } else {
+      //     dailyitems = [];
+      //   }
+      //
+      //   var nowDate = new Date();
+      //
+      //   console.log("フットスタンプ:");
+      //   console.log(JSON.stringify(tab));
+      //
+      //   var item = {
+      //     time: nowDate.getTime()
+      //     , title:tab.title
+      //     , url: tab.url
+      //     , favIconUrl: tab.favIconUrl
+      //   }
+      //
+      //   dailyitems.push(item);
+      //
+      //   localStorage.setItem("dailyitems", JSON.stringify(dailyitems));
+      //
+      // });
 
     }
   }
 }
 
 
-
-function getCurrentTab(callback) {
-  var queryInfo = {
-    active: true,
-    currentWindow: true
-  };
-
-  chrome.tabs.query(queryInfo, (tabs) => {
-    var tab = tabs[0];
-    var url = tab.url;
-    callback(tab);
-  });
-
-}
 
 
 

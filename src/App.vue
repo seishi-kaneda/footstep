@@ -12,6 +12,11 @@
 import ListArea from './coms/ListArea';
 import InputArea from './coms/InputArea';
 
+//import FootStepUtils from './mixins/FootStepUtils';
+//
+// // グローバルメソッドのグローバルミックスイン
+//Vue.mixin(FootStepUtils);
+
 
 export default {
   name: 'app',
