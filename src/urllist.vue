@@ -1,8 +1,9 @@
 <template>
   <div>
     <ul v-for="item in listdata">
-      <li >
-        {{ item.title }} : {{ item.url }}
+      <li>
+        <img :src='item.favIconUrl' width="16px" height="16px" />
+        <a href="{{ item.url }}">{{ item.title }}</a>
       </li>
     </ul>
   </div>

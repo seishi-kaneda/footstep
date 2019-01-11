@@ -4,6 +4,7 @@
     <button @click="buttonfunc">保存</button>
     <button @click="clearAll">クリア</button>
     <button @click="openNewTab">タブで開く</button>
+    <button @click="btDebug">デバッグ</button>
   </div>
 </template>
 
@@ -51,6 +52,10 @@ export default {
 
         var nowDate = new Date();
 
+        console.log("フットスタンプ:");
+        console.log(JSON.stringify(tab));
+
+
         var item = {
           time: nowDate.getTime()
           , title:tab.title
@@ -71,6 +76,11 @@ export default {
     },
     openNewTab: function() {
       chrome.tabs.create({url: "index.html"});
+    },
+    btDebug: function() {
+      console.log("localStorage:");
+      console.log(localStorage.getItem("dailyitems"));
+
     }
   }
 }
@@ -92,6 +102,8 @@ function getCurrentTab(callback) {
   });
 
 }
+
+
 
 </script>
 
