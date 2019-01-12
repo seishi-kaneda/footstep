@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <InputArea></InputArea>
     <ListArea></ListArea>
     <button @click="clearAll">クリア</button>
     <button @click="openNewTab">タブで開く</button>
@@ -10,7 +9,6 @@
 
 <script>
 import ListArea from './coms/ListArea';
-import InputArea from './coms/InputArea';
 
 //import FootStepUtils from './mixins/FootStepUtils';
 //
@@ -20,10 +18,7 @@ import InputArea from './coms/InputArea';
 
 export default {
   name: 'app',
-  components: {
-    InputArea,
-    ListArea
-  },
+  components: { ListArea },
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

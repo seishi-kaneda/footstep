@@ -1,11 +1,6 @@
 <template>
   <div>
-    <button @click="btFootStamp">フットスタンプ</button>
-    <input v-model="inputTitle">
-{{ inputTitle }}
-<!--
-    <textarea v-model="inputMemo" placeholder="memo"></textarea>
--->
+    <button @click="btFootStamp">スタンプ</button>
   </div>
 </template>
 
@@ -15,17 +10,11 @@ import FootStepUtils from '../mixins/FootStepUtils';
 
 
 export default {
-  name: 'InputArea',
+  name: 'FootStampButton',
   mixins: [ FootStepUtils ],
   data() {
     return {
-      inputTitle: 'Welcome to Your Vue.js App'
     }
-  },
-  created () {
-    // getCurrentTab(function(tab){
-    //   this.inputTitle = tab.title;
-    // });
   },
   methods: {
     btFootStamp: function () {
@@ -66,26 +55,5 @@ export default {
 </script>
 
 <style>
-
-td {
-  table-layout: fixed;
-}
-
-p.overflow {
-  width: 400px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
 
 </style>
