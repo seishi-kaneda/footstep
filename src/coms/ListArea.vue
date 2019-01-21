@@ -1,18 +1,30 @@
 <template>
+
   <div>
+
     <table>
       <tr>
-        <td><img v-bind:src='inputFavIconUrl' width="32px" height="32px" /></td>
-        <td><input class="inputStyle" v-model="inputTitle"></td>
-        <td><FootStampButton /></td>
-      </tr>
-
-      <tr v-for="item in listdata">
-        <td><img v-bind:src='item.favIconUrl' width="32px" height="32px" /></td>
-        <td align="left"><p class="overflow"><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></p></td>
-        <td><FootStampButton /></td>
+        <td><img id="favIcon" v-bind:src='tabFavIconUrl' width="32px" height="32px" @error="onErrorImage" /></td>
+        <td><input class="inputStyle" v-model="tabTitle"></td>
+        <td><FootStampButton @click="clickNewStamp" /></td>
       </tr>
     </table>
+
+    <table>
+      <tr v-for="listdata in dailydataList">
+        <td>
+          <table>
+            <tr v-for="item in listdata">
+              <td>{{ item.times[0] }}</td>
+              <td><img v-bind:src='item.favicon' width="32px" height="32px" /></td>
+              <td align="left"><p class="overflow"><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></p></td>
+              <td><FootStampButton /></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
   </div>
 </template>
 
@@ -26,48 +38,74 @@ export default {
   name: 'ListArea',
   mixins: [ FootStepUtils ],
   components: { FootStampButton },
+  props: {
+    dailydataList: {
+      type: Array,
+      default: []
+    },
+    tabTitle : {
+      type: String,
+      default: ""
+    },
+    tabUrl : {
+      type: String,
+      default: ""
+    },
+    tabFavIconUrl : {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
-      listdata: JSON.parse(localStorage.dailyitems),
-      inputTitle: '',
-      inputFavIconUrl: ''
     }
   },
   mounted () {
     var me = this;
     this.getCurrentTab(function(tab){
-       me.inputTitle = tab.title;
-       me.inputFavIconUrl = tab.favIconUrl
+       me.tabTitle = tab.title;
+       me.tabFavIconUrl = tab.favIconUrl
+       me.tabUrl = tab.url;
     });
+
+    chrome.runtime.sendMessage({
+        message: "getDailydataList",
+        start: 0,
+        days: 3
+      },
+      function(dailydataList) {
+        console.log(dailydataList);
+        me.dailydataList = dailydataList;
+      }
+    );
+
+
   },
   methods: {
-    btFootStamp: function () {
-      // getCurrentTab(function(tab){
-      //   var dailyitems;
-      //   if (localStorage.getItem("dailyitems")) {
-      //     dailyitems = JSON.parse(localStorage.getItem("dailyitems"));
-      //   } else {
-      //     dailyitems = [];
-      //   }
-      //
-      //   var nowDate = new Date();
-      //
-      //   console.log("フットスタンプ:");
-      //   console.log(JSON.stringify(tab));
-      //
-      //   var item = {
-      //     time: nowDate.getTime()
-      //     , title:tab.title
-      //     , url: tab.url
-      //     , favIconUrl: tab.favIconUrl
-      //   }
-      //
-      //   dailyitems.push(item);
-      //
-      //   localStorage.setItem("dailyitems", JSON.stringify(dailyitems));
-      //
-      // });
+    clickNewStamp: function () {
+      var me = this;
 
+      var ymd = this.getNowYMD();
+      var stampData = {
+        count:1,
+        times:[new Date().getTime()],
+        title:this.tabTitle,
+        url:this.tabUrl,
+        favicon:this.tabFavIconUrl
+      }
+
+      chrome.runtime.sendMessage({
+          message: "saveNewStamp",
+          day: ymd,
+          stampData: stampData
+        },
+        function(dailydataList) {
+          me.dailydataList = dailydataList;
+        }
+      );
+    },
+    onErrorImage: function(event) {
+      event.target.style.display='none'
     }
   }
 }

@@ -10,11 +10,6 @@
 <script>
 import ListArea from './coms/ListArea';
 
-//import FootStepUtils from './mixins/FootStepUtils';
-//
-// // グローバルメソッドのグローバルミックスイン
-//Vue.mixin(FootStepUtils);
-
 
 export default {
   name: 'app',
@@ -33,13 +28,14 @@ export default {
       chrome.tabs.create({url: "index.html"});
     },
     btDebug: function() {
-      console.log("localStorage:");
-      console.log(localStorage.getItem("dailyitems"));
+      chrome.tabs.create({url: "debugstorage.html"});
     }
   }
 }
 
+function testStorage() {
 
+}
 
 
 </script>

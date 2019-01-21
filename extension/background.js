@@ -1,59 +1,87 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
 
-// Global variables only exist for the life of the page, so they get reset
-// each time the page is unloaded.
-var counter = 1;
 
-var lastTabId = -1;
-function sendMessage() {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    lastTabId = tabs[0].id;
-    chrome.tabs.sendMessage(lastTabId, "Background page started.");
-  });
+const KeyStampedDays = "stampedDays";
+
+var stampedDays = [];
+var stampedDays_map = [];
+if (localStorage.getItem(KeyStampedDays)) {
+  stampedDays = JSON.parse(localStorage.getItem(KeyStampedDays));
 }
 
-var badge_counter = 0;
+for (var i=0; i<stampedDays.length; i++) {
+  var day = stampedDays[i];
+  stampedDays_map[day] = 1;
+}
 
-sendMessage();
-chrome.browserAction.setBadgeText({text: "" + badge_counter++});
-console.log("Loaded.");
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
 
-chrome.runtime.onInstalled.addListener(function() {
-  console.log("Installed.");
+    if (request.message == "getDailydataList") {
+      dailydataList = getDailydataList(request.start, request.days);
+      sendResponse(dailydataList);
 
-  // localStorage is persisted, so it's a good place to keep state that you
-  // need to persist across page reloads.
-  localStorage.counter = 1;
-
-});
-
-
-// chrome.browserAction.onClicked.addListener(function() {
-//   chrome.tabs.create({url: "index.html"});
-// });
+    } else if (request.message == "saveNewStamp") {
+      saveNewStamp(request.day, request.stampData);
+      sendResponse();
+    }
+    return true;
+  }
+);
 
 
-//
-// /**
-//  * Get the current tab.
-//  *
-//  * @param {function(tab)} callback called when the URL of the current tab
-//  *   is found.
-//  */
-// function getCurrentTab(callback) {
-//   // Query filter to be passed to chrome.tabs.query - see
-//   // https://developer.chrome.com/extensions/tabs#method-query
-//   var queryInfo = {
-//     active: true,
-//     currentWindow: true
-//   };
-//
-//   chrome.tabs.query(queryInfo, (tabs) => {
-//     var tab = tabs[0];
-//     var url = tab.url;
-//     callback(tab);
-//   });
-//
-// }
+function getDailydataList(start, days) {
+
+  var ret = [];
+  for (var i=start; i<days; i++) {
+    var j = stampedDays.length - 1 - i;
+    var day = stampedDays[j];
+
+    if (!localStorage[day]) {
+      //不整合データ
+      continue;
+    }
+    ret.push(getDailyData(day));
+  }
+  return ret;
+}
+
+
+/*
+stampData
+- count : Number //スタンプカウント
+- times : Array(Number) // フットスタンプした時点のUNIXタイムスタンプ
+- title : String //タイトル
+- url : String
+- favicon : String //お気に入りアイコンurl
+*/
+function saveNewStamp(day, stampData) {
+
+  var dailyData = [];
+  if (!stampedDays_map[day]) {
+    //未登録日の場合、日を登録
+    stampedDays_map[day] = 1;
+    stampedDays.push(day);
+    stampedDays.sort();
+    localStorage.setItem(KeyStampedDays, JSON.stringify(stampedDays));
+
+    //１件登録
+    dailyData = [stampData];
+
+  } else {
+    dailyData = getDailyData(day);
+    dailyData.push(stampData);
+  }
+
+
+
+  saveDailyData(day, dailyData);
+
+}
+
+function getDailyData(day) {
+  return JSON.parse(localStorage.getItem(day));
+}
+
+function saveDailyData(day, dailyData) {
+  localStorage.setItem(day, JSON.stringify(dailyData));
+}
