@@ -11,13 +11,13 @@
       <tr height="40">
         <td> </td>
       </tr>
-      <template v-for="listdata in dailydataList">
+      <template v-for="dailyData in dailydataList">
         <tr>
           <td colspan="3" >
-            <b>{{ dateFormat(listdata) }}</b>
+            <b>{{ dateFormat(dailyData.day) }}</b>
           </td>
         </tr>
-        <tr v-for="item in listdata">
+        <tr v-for="item in dailyData.stampList">
           <td>{{ timeFormat(item.times[0]) }}</td>
           <td><img v-bind:src='item.favicon' width="32px" height="32px" @error="onErrorImage" /></td>
           <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
@@ -119,19 +119,16 @@ export default {
       var min  = d.getMinutes();
       return hour + ":" + min;
     },
-    dateFormat : function(listdata) {
+    dateFormat : function(ymd) {
       var WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
+      var y = parseInt(ymd.substring(0, 4));
+      var m = parseInt(ymd.substring(5, 7));
+      var d = parseInt(ymd.substring(8, 10));
 
-      var unixtime = listdata[0].times[0];
-      var d = new Date(unixtime);
+      var date = new Date( y, m-1, d );
+      var w = WeekChars[date.getDay()];
 
-      var year = d.getFullYear();
-      var month = (d.getMonth()+1);
-      var date = d.getDate();
-      var week = WeekChars[d.getDay()];
-
-      return year + "年" + month + "月" + date + "日" + "（" + week + "）";
-
+      return y + "年" + m + "月" + d + "日" + "（" + w + "）";
     }
   }
 }

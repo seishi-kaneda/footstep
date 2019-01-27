@@ -56,7 +56,6 @@ stampData
 */
 function saveNewStamp(day, stampData) {
 
-  var dailyData = [];
   if (!stampedDays_map[day]) {
     //未登録日の場合、日を登録
     stampedDays_map[day] = 1;
@@ -65,22 +64,29 @@ function saveNewStamp(day, stampData) {
     localStorage.setItem(KeyStampedDays, JSON.stringify(stampedDays));
 
     //１件登録
-    dailyData = [stampData];
+    var dailyData = {
+      day:day,
+      stampList:[stampData]
+    };
 
   } else {
     dailyData = getDailyData(day);
     //先頭に追加
-    dailyData.unshift(stampData);
+    dailyData.stampList.unshift(stampData);
   }
 
-  saveDailyData(day, dailyData);
+  saveDailyData(dailyData);
   return dailyData;
 }
 
 function getDailyData(day) {
-  return JSON.parse(localStorage.getItem(day));
+  var dailyData = {
+    day:day,
+    stampList:JSON.parse(localStorage.getItem(day))
+  }
+  return dailyData;
 }
 
-function saveDailyData(day, dailyData) {
-  localStorage.setItem(day, JSON.stringify(dailyData));
+function saveDailyData(dailyData) {
+  localStorage.setItem(dailyData.day, JSON.stringify(dailyData.stampList));
 }
