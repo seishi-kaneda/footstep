@@ -21,8 +21,8 @@ chrome.runtime.onMessage.addListener(
       sendResponse(dailydataList);
 
     } else if (request.message == "saveNewStamp") {
-      saveNewStamp(request.day, request.stampData);
-      sendResponse();
+      dailyData = saveNewStamp(request.day, request.stampData);
+      sendResponse(dailyData);
     }
     return true;
   }
@@ -69,13 +69,12 @@ function saveNewStamp(day, stampData) {
 
   } else {
     dailyData = getDailyData(day);
-    dailyData.push(stampData);
+    //先頭に追加
+    dailyData.unshift(stampData);
   }
 
-
-
   saveDailyData(day, dailyData);
-
+  return dailyData;
 }
 
 function getDailyData(day) {

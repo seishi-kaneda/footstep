@@ -1,28 +1,29 @@
 <template>
 
   <div>
-
     <table>
       <tr>
+        <td></td>
         <td><img id="favIcon" v-bind:src='tabFavIconUrl' width="32px" height="32px" @error="onErrorImage" /></td>
         <td><input class="inputStyle" v-model="tabTitle"></td>
         <td><FootStampButton @click="clickNewStamp" /></td>
       </tr>
-    </table>
-
-    <table>
-      <tr v-for="listdata in dailydataList">
-        <td>
-          <table>
-            <tr v-for="item in listdata">
-              <td>{{ item.times[0] }}</td>
-              <td><img v-bind:src='item.favicon' width="32px" height="32px" /></td>
-              <td align="left"><p class="overflow"><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></p></td>
-              <td><FootStampButton /></td>
-            </tr>
-          </table>
-        </td>
+      <tr height="40">
+        <td> </td>
       </tr>
+      <template v-for="listdata in dailydataList">
+        <tr>
+          <td colspan="3" >
+            <b>{{ dateFormat(listdata) }}</b>
+          </td>
+        </tr>
+        <tr v-for="item in listdata">
+          <td>{{ timeFormat(item.times[0]) }}</td>
+          <td><img v-bind:src='item.favicon' width="32px" height="32px" @error="onErrorImage" /></td>
+          <td align="left"><p class="overflow"><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></p></td>
+          <td><FootStampButton /></td>
+        </tr>
+      </template>
     </table>
 
   </div>
@@ -39,10 +40,10 @@ export default {
   mixins: [ FootStepUtils ],
   components: { FootStampButton },
   props: {
-    dailydataList: {
-      type: Array,
-      default: []
-    },
+    // dailydataList: {
+    //   type: Array,
+    //   default: []
+    // },
     tabTitle : {
       type: String,
       default: ""
@@ -58,6 +59,7 @@ export default {
   },
   data() {
     return {
+      dailydataList : []
     }
   },
   mounted () {
@@ -99,16 +101,42 @@ export default {
           day: ymd,
           stampData: stampData
         },
-        function(dailydataList) {
-          me.dailydataList = dailydataList;
+        function(dailyData) {
+
+//          me.dailydataList = dailydataList;
+//          me.$forceUpdate();
+
+
         }
       );
     },
     onErrorImage: function(event) {
       event.target.style.display='none'
+    },
+    timeFormat : function(unixtime){
+      var d = new Date(unixtime);
+      var hour = d.getHours();
+      var min  = d.getMinutes();
+      return hour + ":" + min;
+    },
+    dateFormat : function(listdata) {
+      var WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
+
+      var unixtime = listdata[0].times[0];
+      var d = new Date(unixtime);
+
+      var year = d.getFullYear();
+      var month = (d.getMonth()+1);
+      var date = d.getDate();
+      var week = WeekChars[d.getDay()];
+
+      return year + "年" + month + "月" + date + "日" + "（" + week + "）";
+
     }
   }
 }
+
+
 </script>
 
 
