@@ -18,7 +18,7 @@
           </td>
         </tr>
         <tr v-for="item in dailyData.stampList">
-          <td>{{ timeFormat(item.times[0]) }}</td>
+          <td align="left">{{ timeFormat(item.times[0]) }}</td>
           <td><img v-bind:src='item.favicon' width="32px" height="32px" @error="onErrorImage" /></td>
           <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
           <td><FootStampButton /></td>
@@ -117,7 +117,7 @@ export default {
       var d = new Date(unixtime);
       var hour = d.getHours();
       var min  = d.getMinutes();
-      return hour + ":" + min;
+      return hour + "時" + min + "分";
     },
     dateFormat : function(ymd) {
       var WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
