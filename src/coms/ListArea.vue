@@ -103,6 +103,14 @@ export default {
         },
         function(dailyData) {
 
+          for (var i=0; i<me.dailydataList.length; i++) {
+            if (me.dailydataList[i].day == ymd) {
+              me.$set(me.dailydataList, i, dailyData);
+//              me.dailydataList[i] = dailyData;
+              break;
+            }
+          }
+
 //          me.dailydataList = dailydataList;
 //          me.$forceUpdate();
 
