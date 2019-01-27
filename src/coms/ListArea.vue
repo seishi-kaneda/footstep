@@ -20,7 +20,7 @@
         <tr v-for="item in listdata">
           <td>{{ timeFormat(item.times[0]) }}</td>
           <td><img v-bind:src='item.favicon' width="32px" height="32px" @error="onErrorImage" /></td>
-          <td align="left"><p class="overflow"><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></p></td>
+          <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
           <td><FootStampButton /></td>
         </tr>
       </template>
