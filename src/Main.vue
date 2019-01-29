@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="main">
     <ListArea></ListArea>
     <button @click="clearAll">クリア</button>
     <button @click="openNewTab">タブで開く</button>
@@ -12,7 +12,7 @@ import ListArea from './coms/ListArea';
 
 
 export default {
-  name: 'app',
+  name: 'main',
   components: { ListArea },
   data () {
     return {
@@ -45,7 +45,7 @@ body {
   min-width: 600px;
 }
 
-#app {
+#main {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
