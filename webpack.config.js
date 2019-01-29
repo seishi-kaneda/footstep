@@ -4,7 +4,8 @@ var webpack = require('webpack')
 module.exports = {
   watch: true,
   entry: {
-    main: './src/main.js'
+    main: './src/main.js',
+    options: './src/options.js'
   },
   output: {
     path: path.resolve(__dirname, './extension/dist'),

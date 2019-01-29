@@ -19,5 +19,6 @@
     "128": "images/browsericon_purple_128.png",
     "48": "images/browsericon_purple_48.png",
     "16":"images/browsericon_purple_16.png"
-  }
+  },
+  "options_page": "options.html"
 }
