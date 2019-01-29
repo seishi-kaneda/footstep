@@ -13,7 +13,7 @@
       "32": "images/browsericon_purple_32.png"
     },
     "default_title": "FootStep",
-    "default_popup": "index.html"
+    "default_popup": "main.html"
   },
   "icons": {
     "128": "images/browsericon_purple_128.png",
