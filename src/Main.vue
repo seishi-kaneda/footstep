@@ -9,7 +9,7 @@
       </tr>
     </table>
     <template v-if="isShowFootmarkList">
-      <ListArea ref="footMarkList" ></ListArea>
+      <FootmarkList ref="footmarkList" ></FootmarkList>
     </template>
     <template v-else>
       <a @click="recentFootmark">最近のフットマークを表示</a>
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import ListArea from './coms/ListArea';
+import FootmarkList from './coms/FootmarkList';
 import FootStampButton from './coms/FootStampButton';
 import FootStepUtils from './mixins/FootStepUtils';
 import FavIcon from './coms/FavIcon';
@@ -26,7 +26,7 @@ import FavIcon from './coms/FavIcon';
 
 export default {
   name: 'main',
-  components: { ListArea, FootStampButton, FavIcon },
+  components: { FootmarkList, FootStampButton, FavIcon },
   mixins: [ FootStepUtils ],
   props: {
   },
@@ -71,8 +71,8 @@ export default {
         function(dailyData) {
 
           if (me.isShowFootmarkList) {
-            me.$refs.footMarkList.reload();
-//            me.$refs.footMarkList.updateDailyData(dailyData);
+            me.$refs.footmarkList.reload();
+//            me.$refs.footmarkList.updateDailyData(dailyData);
           } else {
             me.isShowFootmarkList = true;
           }

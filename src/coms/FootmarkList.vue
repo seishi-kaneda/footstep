@@ -28,7 +28,7 @@ import FavIcon from '../coms/FavIcon';
 
 
 export default {
-  name: 'ListArea',
+  name: 'FootmarkList',
   mixins: [ FootStepUtils ],
   components: { FootStampButton, FavIcon },
   props: {
@@ -122,22 +122,7 @@ export default {
 
 
 <style>
+@import '../styles/FootStepStyle.css';
 
-p.overflow {
-  width: 400px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
 
 </style>
