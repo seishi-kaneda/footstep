@@ -8,11 +8,11 @@
             <b>{{ dateFormat(dailyData.day) }}</b>
           </td>
         </tr>
-        <tr v-for="item in dailyData.stampList">
+        <tr v-for="item in dailyData.markList">
           <td align="left">{{ timeFormat(item.times[0]) }}</td>
           <td><FavIcon v-bind:iconUrl='item.favicon' /></td>
           <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
-          <td><FootStampButton /></td>
+          <td><FootmarkButton /></td>
         </tr>
       </template>
     </table>
@@ -23,14 +23,14 @@
 <script>
 
 import FootStepUtils from '../mixins/FootStepUtils';
-import FootStampButton from '../coms/FootStampButton';
+import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
 
 export default {
   name: 'FootmarkList',
   mixins: [ FootStepUtils ],
-  components: { FootStampButton, FavIcon },
+  components: { FootmarkButton, FavIcon },
   props: {
     // dailydataList: {
     //   type: Array,
@@ -67,11 +67,11 @@ export default {
     //     }
     //   }
     // },
-    clickNewStamp: function () {
+    clickNewMark: function () {
       var me = this;
 
       var ymd = this.getNowYMD();
-      var stampData = {
+      var markData = {
         count:1,
         times:[new Date().getTime()],
         title:this.tabTitle,
@@ -80,9 +80,9 @@ export default {
       }
 
       chrome.runtime.sendMessage({
-          message: "saveNewStamp",
+          message: "saveNewMark",
           day: ymd,
-          stampData: stampData
+          markData: markData
         },
         function(dailyData) {
 

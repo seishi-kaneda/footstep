@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="btFootStamp">スタンプ</button>
+    <button @click="btFootmark">スタンプ</button>
   </div>
 </template>
 
@@ -10,14 +10,14 @@ import FootStepUtils from '../mixins/FootStepUtils';
 
 
 export default {
-  name: 'FootStampButton',
+  name: 'FootmarkButton',
   mixins: [ FootStepUtils ],
   data() {
     return {
     }
   },
   methods: {
-    btFootStamp: function () {
+    btFootmark: function () {
       this.$emit('click')
     }
   }

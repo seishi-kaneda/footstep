@@ -5,7 +5,7 @@
         <td></td>
         <td><FavIcon v-bind:iconUrl='tabFavIconUrl' /></td>
         <td><input class="inputStyle" v-model="tabTitle"></td>
-        <td><FootStampButton @click="clickNewStamp" /></td>
+        <td><FootmarkButton @click="clickNewMark" /></td>
       </tr>
     </table>
     <template v-if="isShowFootmarkList">
@@ -19,14 +19,14 @@
 
 <script>
 import FootmarkList from './coms/FootmarkList';
-import FootStampButton from './coms/FootStampButton';
+import FootmarkButton from './coms/FootmarkButton';
 import FootStepUtils from './mixins/FootStepUtils';
 import FavIcon from './coms/FavIcon';
 
 
 export default {
   name: 'main',
-  components: { FootmarkList, FootStampButton, FavIcon },
+  components: { FootmarkList, FootmarkButton, FavIcon },
   mixins: [ FootStepUtils ],
   props: {
   },
@@ -50,11 +50,11 @@ export default {
     recentFootmark: function() {
       this.isShowFootmarkList = true;
     },
-    clickNewStamp: function () {
+    clickNewMark: function () {
       var me = this;
 
       var ymd = this.getNowYMD();
-      var stampData = {
+      var markData = {
         count:1,
         times:[new Date().getTime()],
         title:this.tabTitle,
@@ -63,9 +63,9 @@ export default {
       }
 
       chrome.runtime.sendMessage({
-          message: "saveNewStamp",
+          message: "saveNewMark",
           day: ymd,
-          stampData: stampData
+          markData: markData
         },
         //保存後イベント
         function(dailyData) {
