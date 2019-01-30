@@ -24,12 +24,15 @@
 
 <script>
 
+import FootStepUtils from './mixins/FootStepUtils';
+
 
 export default {
   name: 'options',
+  mixins: [ FootStepUtils ],
   data() {
     return {
-      storageDataList : {a:"b"}
+      storageDataList : {}
     }
   },
   methods: {
@@ -53,12 +56,9 @@ export default {
     btExport: function() {
 
       var date = new Date();
-      var manifest = chrome.runtime.getManifest();
 
       //1行目はヘッダ情報
-      var exportText = "FootStep LocalStrage Data."
-                    + "\tver:\t" + manifest.version
-                    + "\ttime:\t" + date.getTime();
+      var exportText = this.getExportFileHeader();
       //2行目以降本体
       for (var i=0; i<localStorage.length; i++) {
         var key = localStorage.key(i);
