@@ -3,7 +3,7 @@
     <table>
       <tr>
         <td></td>
-        <td><img id="favIcon" v-bind:src='tabFavIconUrl' class='favicon' @error="onErrorImage" @load="onLoadImage" /></td>
+        <td><FavIcon v-bind:iconUrl='tabFavIconUrl' /></td>
         <td><input class="inputStyle" v-model="tabTitle"></td>
         <td><FootStampButton @click="clickNewStamp" /></td>
       </tr>
@@ -21,16 +21,14 @@
 import ListArea from './coms/ListArea';
 import FootStampButton from './coms/FootStampButton';
 import FootStepUtils from './mixins/FootStepUtils';
+import FavIcon from './coms/FavIcon';
+
 
 export default {
   name: 'main',
-  components: { ListArea, FootStampButton },
+  components: { ListArea, FootStampButton, FavIcon },
   mixins: [ FootStepUtils ],
   props: {
-    // isShowFootmarkList : {type: Boolean, default: false},
-    // tabTitle : {type: String, default: ""},
-    // tabUrl : {type: String,default: ""},
-    // tabFavIconUrl : {type: String,default: ""}
   },
   data () {
     return {
@@ -81,12 +79,6 @@ export default {
         }
       );
     },
-    onErrorImage: function(event) {
-      event.target.style.visibility='hidden'
-    },
-    onLoadImage: function(event) {
-      event.target.style.visibility='visible'
-    }
   }
 }
 
@@ -113,12 +105,6 @@ a {
   margin-top: 60px;
 }
 
-
-img.favicon {
-  width: 24px;
-  height: 24px;
-}
-
 input.inputStyle {
   width: 400px;
 }
@@ -126,9 +112,5 @@ input.inputStyle {
 td {
   table-layout: fixed;
 }
-
-/* h1, h2 {
-  font-weight: normal;
-}  */
 
 </style>

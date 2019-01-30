@@ -10,7 +10,7 @@
         </tr>
         <tr v-for="item in dailyData.stampList">
           <td align="left">{{ timeFormat(item.times[0]) }}</td>
-          <td><img v-bind:src='item.favicon' class='favicon' @error="onErrorImage" /></td>
+          <td><FavIcon v-bind:iconUrl='item.favicon' /></td>
           <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
           <td><FootStampButton /></td>
         </tr>
@@ -24,12 +24,13 @@
 
 import FootStepUtils from '../mixins/FootStepUtils';
 import FootStampButton from '../coms/FootStampButton';
+import FavIcon from '../coms/FavIcon';
 
 
 export default {
   name: 'ListArea',
   mixins: [ FootStepUtils ],
-  components: { FootStampButton },
+  components: { FootStampButton, FavIcon },
   props: {
     // dailydataList: {
     //   type: Array,
@@ -95,9 +96,6 @@ export default {
         }
       );
     },
-    onErrorImage: function(event) {
-      event.target.style.display='none'
-    },
     timeFormat : function(unixtime){
       var d = new Date(unixtime);
       var hour = d.getHours();
@@ -141,11 +139,5 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-
-img.favicon {
-  width: 24px;
-  height: 24px;
-}
-
 
 </style>
