@@ -2,14 +2,14 @@
 
 const KeyFootstepDays = "stampedDays";
 
-var footstepDays = [];
-var footstepDays_map = [];
+let footstepDays = [];
+const footstepDays_map = [];
 if (localStorage.getItem(KeyFootstepDays)) {
   footstepDays = JSON.parse(localStorage.getItem(KeyFootstepDays));
 }
 
-for (var i=0; i<footstepDays.length; i++) {
-  var day = footstepDays[i];
+for (let i=0; i<footstepDays.length; i++) {
+  const day = footstepDays[i];
   footstepDays_map[day] = 1;
 }
 
@@ -31,10 +31,10 @@ chrome.runtime.onMessage.addListener(
 
 function getDailydataList(start, days) {
 
-  var ret = [];
-  for (var i=start; i<days; i++) {
-    var j = footstepDays.length - 1 - i;
-    var day = footstepDays[j];
+  const ret = [];
+  for (let i=start; i<days; i++) {
+    const j = footstepDays.length - 1 - i;
+    const day = footstepDays[j];
 
     if (!localStorage[day]) {
       //不整合データ
@@ -64,7 +64,7 @@ function saveNewMark(day, markData) {
     localStorage.setItem(KeyFootstepDays, JSON.stringify(footstepDays));
 
     //１件登録
-    var dailyData = {
+    const dailyData = {
       day:day,
       markList:[markData]
     };
@@ -80,7 +80,7 @@ function saveNewMark(day, markData) {
 }
 
 function getDailyData(day) {
-  var dailyData = {
+  const dailyData = {
     day:day,
     markList:JSON.parse(localStorage.getItem(day))
   }

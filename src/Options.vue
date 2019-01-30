@@ -40,28 +40,28 @@ export default {
     btViewStorage: function() {
       this.$set(this.storageDataList, "key", "value");
 //      this.storageDataList["key"] = "value";
-      for (var i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var value = localStorage[key];
+      for (let i=0; i<localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage[key];
 //        this.storageDataList[key] = value;
           this.$set(this.storageDataList, key, value);
       }
     },
     btExport: function() {
 
-      var date = new Date();
+      const date = new Date();
 
       //1行目はヘッダ情報
-      var exportText = this.getExportFileHeader();
+      let exportText = this.getExportFileHeader();
       //2行目以降本体
-      for (var i=0; i<localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var value = localStorage[key];
+      for (let i=0; i<localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage[key];
         exportText += "\n" + key + "\t" + value;
       }
-      var exportBlob = new Blob([exportText], {type: 'text/plain'});
+      const exportBlob = new Blob([exportText], {type: 'text/plain'});
 
-      var filename = date.getFullYear()
+      const filename = date.getFullYear()
               + ("00" + (date.getMonth()+1)).slice(-2)
               + ("00" + date.getDate()).slice(-2)
               + "_"
@@ -70,7 +70,7 @@ export default {
               + ("00" + date.getSeconds()).slice(-2)
               + ".footstep";
 
-      var link = document.createElement('a');
+      const link = document.createElement('a');
       link.download = filename;
       link.target   = '_blank';
       //chromeのやり方
@@ -81,7 +81,7 @@ export default {
 
     },
     btImport: function() {
-      var ok = confirm("【警告】"
+      const ok = confirm("【警告】"
             + "\nこの操作は現在のデータを全て消去し、"
             + "\nインポートファイルのデータで置き換えます。"
             + "\n実施してもよろしいですか？");
@@ -115,7 +115,7 @@ export default {
         //これ5MBあったら重いだろうな・・ライン読み込み要調査
         const lines = fileText.split(/\n/);
         //本体は２行目から
-        for (var i=1; i<lines.length; i++) {
+        for (let i=1; i<lines.length; i++) {
           let keyvalue = lines[i].split(/\t/);
           localStorage.setItem(keyvalue[0], keyvalue[1]);
         }

@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     reload: function() {
-      var me = this;
+      const me = this;
       chrome.runtime.sendMessage({
           message: "getDailydataList",
           start: 0,
@@ -59,7 +59,7 @@ export default {
       );
     },
     // updateDailyData: function(dailyData) {
-    //   for (var i=0; i<me.dailydataList.length; i++) {
+    //   for (let i=0; i<me.dailydataList.length; i++) {
     //     if (me.dailydataList[i].day == ymd) {
     //       //データ更新
     //       me.$set(me.dailydataList, i, dailyData);
@@ -68,10 +68,10 @@ export default {
     //   }
     // },
     clickNewMark: function () {
-      var me = this;
+      const me = this;
 
-      var ymd = this.getNowYMD();
-      var markData = {
+      const ymd = this.getNowYMD();
+      const markData = {
         count:1,
         times:[new Date().getTime()],
         title:this.tabTitle,
@@ -86,7 +86,7 @@ export default {
         },
         function(dailyData) {
 
-          for (var i=0; i<me.dailydataList.length; i++) {
+          for (let i=0; i<me.dailydataList.length; i++) {
             if (me.dailydataList[i].day == ymd) {
               //データ更新
               me.$set(me.dailydataList, i, dailyData);
@@ -97,19 +97,19 @@ export default {
       );
     },
     timeFormat : function(unixtime){
-      var d = new Date(unixtime);
-      var hour = d.getHours();
-      var min  = d.getMinutes();
+      const d = new Date(unixtime);
+      const hour = d.getHours();
+      const min  = d.getMinutes();
       return hour + "時" + min + "分";
     },
     dateFormat : function(ymd) {
-      var WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
-      var y = parseInt(ymd.substring(0, 4));
-      var m = parseInt(ymd.substring(5, 7));
-      var d = parseInt(ymd.substring(8, 10));
+      const WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
+      const y = parseInt(ymd.substring(0, 4));
+      const m = parseInt(ymd.substring(5, 7));
+      const d = parseInt(ymd.substring(8, 10));
 
-      var date = new Date( y, m-1, d );
-      var w = WeekChars[date.getDay()];
+      const date = new Date( y, m-1, d );
+      const w = WeekChars[date.getDay()];
 
       return y + "年" + m + "月" + d + "日" + "（" + w + "）";
     }

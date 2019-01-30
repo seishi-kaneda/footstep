@@ -39,7 +39,7 @@ export default {
     }
   },
   mounted () {
-    var me = this;
+    const me = this;
     this.getCurrentTab(function(tab){
        me.tabTitle = tab.title;
        me.tabFavIconUrl = tab.favIconUrl
@@ -51,10 +51,10 @@ export default {
       this.isShowFootmarkList = true;
     },
     clickNewMark: function () {
-      var me = this;
+      const me = this;
 
-      var ymd = this.getNowYMD();
-      var markData = {
+      const ymd = this.getNowYMD();
+      const markData = {
         count:1,
         times:[new Date().getTime()],
         title:this.tabTitle,
