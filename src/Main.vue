@@ -1,40 +1,86 @@
 <template>
   <div id="main">
-    <ListArea></ListArea>
-    <button @click="clearAll">クリア</button>
-    <button @click="openNewTab">タブで開く</button>
-    <button @click="btDebug">デバッグ</button>
+    <table>
+      <tr>
+        <td></td>
+        <td><img id="favIcon" v-bind:src='tabFavIconUrl' width="32px" height="32px" @error="onErrorImage" /></td>
+        <td><input class="inputStyle" v-model="tabTitle"></td>
+        <td><FootStampButton @click="clickNewStamp" /></td>
+      </tr>
+    </table>
+    <template v-if="isShowFootmarkList">
+      <ListArea ref="footMarkList" ></ListArea>
+    </template>
+    <template v-else>
+      <a @click="recentFootmark">最近のフットマークを表示</a>
+    </template>
   </div>
 </template>
 
 <script>
 import ListArea from './coms/ListArea';
-
+import FootStampButton from './coms/FootStampButton';
+import FootStepUtils from './mixins/FootStepUtils';
 
 export default {
   name: 'main',
-  components: { ListArea },
+  components: { ListArea, FootStampButton },
+  mixins: [ FootStepUtils ],
+  props: {
+    isShowFootmarkList : {type: Boolean, default: false},
+    tabTitle : {type: String, default: ""},
+    tabUrl : {type: String,default: ""},
+    tabFavIconUrl : {type: String,default: ""}
+  },
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
     }
   },
+  mounted () {
+    var me = this;
+    this.getCurrentTab(function(tab){
+       me.tabTitle = tab.title;
+       me.tabFavIconUrl = tab.favIconUrl
+       me.tabUrl = tab.url;
+    });
+  },
   methods: {
-    clearAll: function() {
-      localStorage.clear();
-      localStorage.counter = 0;
+    recentFootmark: function() {
+      this.isShowFootmarkList = true;
     },
-    openNewTab: function() {
-      chrome.tabs.create({url: "index.html"});
+    clickNewStamp: function () {
+      var me = this;
+
+      var ymd = this.getNowYMD();
+      var stampData = {
+        count:1,
+        times:[new Date().getTime()],
+        title:this.tabTitle,
+        url:this.tabUrl,
+        favicon:this.tabFavIconUrl
+      }
+
+      chrome.runtime.sendMessage({
+          message: "saveNewStamp",
+          day: ymd,
+          stampData: stampData
+        },
+        //保存後イベント
+        function(dailyData) {
+
+          if (me.isShowFootmarkList) {
+            me.$refs.footMarkList.reload();
+//            me.$refs.footMarkList.updateDailyData(dailyData);
+          } else {
+            me.isShowFootmarkList = true;
+          }
+        }
+      );
     },
-    btDebug: function() {
-      chrome.tabs.create({url: "debugstorage.html"});
+    onErrorImage: function(event) {
+      event.target.style.display='none'
     }
   }
-}
-
-function testStorage() {
-
 }
 
 
@@ -44,8 +90,14 @@ function testStorage() {
 body {
   min-width: 600px;
 }
+a {
+  cursor:pointer;
+  text-decoration: underline;
+  color: #42b983;
+}
 
-#main {
+
+ #main {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,13 +106,18 @@ body {
   margin-top: 60px;
 }
 
-h1, h2 {
+
+
+input.inputStyle {
+  width: 400px;
+}
+
+td {
+  table-layout: fixed;
+}
+
+/* h1, h2 {
   font-weight: normal;
-}
+}  */
 
-
-
-a {
-  color: #42b983;
-}
 </style>
