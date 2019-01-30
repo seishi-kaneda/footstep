@@ -10,7 +10,7 @@
         </tr>
         <tr v-for="item in dailyData.stampList">
           <td align="left">{{ timeFormat(item.times[0]) }}</td>
-          <td><img v-bind:src='item.favicon' width="32px" height="32px" @error="onErrorImage" /></td>
+          <td><img v-bind:src='item.favicon' class='favicon' @error="onErrorImage" /></td>
           <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
           <td><FootStampButton /></td>
         </tr>
@@ -141,5 +141,11 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
+
+img.favicon {
+  width: 24px;
+  height: 24px;
+}
+
 
 </style>

@@ -3,7 +3,7 @@
     <table>
       <tr>
         <td></td>
-        <td><img id="favIcon" v-bind:src='tabFavIconUrl' width="32px" height="32px" @error="onErrorImage" /></td>
+        <td><img id="favIcon" v-bind:src='tabFavIconUrl' class='favicon' @error="onErrorImage" @load="onLoadImage" /></td>
         <td><input class="inputStyle" v-model="tabTitle"></td>
         <td><FootStampButton @click="clickNewStamp" /></td>
       </tr>
@@ -27,13 +27,17 @@ export default {
   components: { ListArea, FootStampButton },
   mixins: [ FootStepUtils ],
   props: {
-    isShowFootmarkList : {type: Boolean, default: false},
-    tabTitle : {type: String, default: ""},
-    tabUrl : {type: String,default: ""},
-    tabFavIconUrl : {type: String,default: ""}
+    // isShowFootmarkList : {type: Boolean, default: false},
+    // tabTitle : {type: String, default: ""},
+    // tabUrl : {type: String,default: ""},
+    // tabFavIconUrl : {type: String,default: ""}
   },
   data () {
     return {
+      isShowFootmarkList : false,
+      tabTitle: "",
+      tabUrl: "",
+      tabFavIconUrl: undefined
     }
   },
   mounted () {
@@ -78,7 +82,10 @@ export default {
       );
     },
     onErrorImage: function(event) {
-      event.target.style.display='none'
+      event.target.style.visibility='hidden'
+    },
+    onLoadImage: function(event) {
+      event.target.style.visibility='visible'
     }
   }
 }
@@ -107,6 +114,10 @@ a {
 }
 
 
+img.favicon {
+  width: 24px;
+  height: 24px;
+}
 
 input.inputStyle {
   width: 400px;
