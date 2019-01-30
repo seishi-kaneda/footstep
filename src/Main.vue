@@ -86,14 +86,7 @@ export default {
 </script>
 
 <style>
-body {
-  min-width: 600px;
-}
-a {
-  cursor:pointer;
-  text-decoration: underline;
-  color: #42b983;
-}
+@import './styles/FootStepStyle.css';
 
 
  #main {
@@ -105,12 +98,5 @@ a {
   margin-top: 60px;
 }
 
-input.inputStyle {
-  width: 400px;
-}
-
-td {
-  table-layout: fixed;
-}
 
 </style>

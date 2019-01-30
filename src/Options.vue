@@ -133,9 +133,8 @@ export default {
 </script>
 
 <style>
-body {
-  min-width: 600px;
-}
+@import './styles/FootStepStyle.css';
+
 
 #options {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -146,13 +145,4 @@ body {
   margin-top: 60px;
 }
 
-h1, h2 {
-  font-weight: normal;
-}
-
-
-
-a {
-  color: #42b983;
-}
 </style>

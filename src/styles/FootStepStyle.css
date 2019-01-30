@@ -1,0 +1,36 @@
+
+
+body {
+  min-width: 600px;
+}
+a {
+  cursor:pointer;
+  text-decoration: underline;
+  color: #42b983;
+}
+
+
+input.inputStyle {
+  width: 400px;
+}
+
+td {
+  table-layout: fixed;
+}
+
+p.overflow {
+  width: 400px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: inline-block;
+  margin: 0 10px;
+}

@@ -30,5 +30,6 @@ export default {
 </script>
 
 <style>
+@import '../styles/FootStepStyle.css';
 
 </style>

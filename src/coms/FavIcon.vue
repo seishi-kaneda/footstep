@@ -34,6 +34,7 @@ export default {
 </script>
 
 <style>
+@import '../styles/FootStepStyle.css';
 
 img.favicon {
   width: 24px;
