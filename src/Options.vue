@@ -32,7 +32,6 @@ export default {
   methods: {
     clearAll: function() {
       localStorage.clear();
-      localStorage.counter = 0;
     },
     openNewTab: function() {
       chrome.tabs.create({url: "index.html"});

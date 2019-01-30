@@ -5,7 +5,7 @@ const KeyFootstepDays = "stampedDays";
 let footstepDays = [];
 const footstepDays_map = [];
 if (localStorage.getItem(KeyFootstepDays)) {
-  footstepDays = JSON.parse(localStorage.getItem(KeyFootstepDays));
+  footstepDays = fromSaveString(localStorage.getItem(KeyFootstepDays));
 }
 
 for (let i=0; i<footstepDays.length; i++) {
@@ -36,7 +36,7 @@ function getDailydataList(start, days) {
     const j = footstepDays.length - 1 - i;
     const day = footstepDays[j];
 
-    if (!localStorage[day]) {
+    if (!localStorage.getItem(day)) {
       //不整合データ
       continue;
     }
@@ -56,22 +56,23 @@ markData
 */
 function saveNewMark(day, markData) {
 
+  let dailyData;
   if (!footstepDays_map[day]) {
     //未登録日の場合、日を登録
     footstepDays_map[day] = 1;
     footstepDays.push(day);
     footstepDays.sort();
-    localStorage.setItem(KeyFootstepDays, JSON.stringify(footstepDays));
+
+    localStorage.setItem(KeyFootstepDays, toSaveString(footstepDays));
 
     //１件登録
-    const dailyData = {
+    dailyData = {
       day:day,
       markList:[markData]
     };
 
   } else {
     dailyData = getDailyData(day);
-    //先頭に追加
     dailyData.markList.unshift(markData);
   }
 
@@ -80,13 +81,37 @@ function saveNewMark(day, markData) {
 }
 
 function getDailyData(day) {
+  if (!localStorage.getItem(day)) {
+    return null;
+  }
+
+  const loadData = fromSaveString(localStorage.getItem(day));
+
   const dailyData = {
     day:day,
-    markList:JSON.parse(localStorage.getItem(day))
+    markList:loadData
   }
   return dailyData;
 }
 
 function saveDailyData(dailyData) {
-  localStorage.setItem(dailyData.day, JSON.stringify(dailyData.markList));
+  localStorage.setItem(dailyData.day, toSaveString(dailyData.markList));
+}
+
+function toSaveString(obj) {
+  return toBase64(JSON.stringify(obj));
+}
+
+function fromSaveString(str) {
+  return JSON.parse(fromBase64(str));
+}
+
+//to base64
+function toBase64(str) {
+  return window.btoa( unescape(encodeURIComponent( str )) );
+}
+
+//from base64
+function fromBase64(str) {
+  return decodeURIComponent( escape(window.atob( str )) );
 }
