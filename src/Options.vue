@@ -2,20 +2,14 @@
   <div id="options">
     <button @click="clearAll">保存データクリア</button>
     <button @click="openNewTab">タブで開く</button>
-    <button @click="btViewStorage">保存データ表示</button>
+<br>
+<br>
     <button @click="btExport">エクスポート</button>
+    <button @click="btImport">インポート</button>
+    <input @change="btFileSelector" id="fileSelector" type="file" style="display: none">
 
 <br>
-    <table>
-      <tr v-for="(value, key) in storageDataList">
-        <td>
-          {{ key }}
-        </td>
-        <td>
-          {{ value }}
-        </td>
-      </tr>
-    </table>
+<br>
 
 
 
@@ -82,6 +76,55 @@ export default {
       //chromeのやり方
       link.href = window.URL.createObjectURL(exportBlob);
       link.click();
+
+      alert("エクスポートを終了しました。");
+
+    },
+    btImport: function() {
+      var ok = confirm("【警告】"
+            + "\nこの操作は現在のデータを全て消去し、"
+            + "\nインポートファイルのデータで置き換えます。"
+            + "\n実施してもよろしいですか？");
+      if (!ok) {
+        return;
+      }
+
+      document.getElementById('fileSelector').click();
+
+
+    },
+    btFileSelector: function(e) {
+      const targetFile = e.target.files[0];
+
+      //FileReaderの作成
+      const reader = new FileReader();
+
+      //読込終了後の処理
+      const me = this;
+      reader.onload = function(ev){
+        const fileText = reader.result;
+
+        if (!me.checkImportFile(fileText)) {
+          alert("無効なファイルです。");
+          return;
+        }
+
+        //全クリア
+        localStorage.clear();
+
+        //これ5MBあったら重いだろうな・・ライン読み込み要調査
+        const lines = fileText.split(/\n/);
+        //本体は２行目から
+        for (var i=1; i<lines.length; i++) {
+          let keyvalue = lines[i].split(/\t/);
+          localStorage.setItem(keyvalue[0], keyvalue[1]);
+        }
+
+        alert("インポートを終了しました。");
+      }
+      //テキスト形式で読み込む
+      reader.readAsText(targetFile);
+
 
     }
   }
