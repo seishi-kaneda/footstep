@@ -10,15 +10,13 @@
   },
   "browser_action": {
     "default_icon": {
-      "32": "images/browsericon_purple_32.png"
+      "48": "images/footmark_cat_red1_48.png"
     },
     "default_title": "FootStep",
     "default_popup": "main.html"
   },
   "icons": {
-    "128": "images/browsericon_purple_128.png",
-    "48": "images/browsericon_purple_48.png",
-    "16":"images/browsericon_purple_16.png"
+    "48": "images/footmark_cat_red1_48.png"
   },
   "options_page": "options.html"
 }
