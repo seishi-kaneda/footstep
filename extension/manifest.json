@@ -1,7 +1,7 @@
 {
-  "name": "FootStep",
+  "name": "Footstep",
   "description": "Test Version. This is a support extension for your daily work.",
-  "version": "1.0",
+  "version": "1.1.1",
   "manifest_version": 2,
   "permissions": ["tabs", "bookmarks"],
   "background": {
@@ -12,7 +12,7 @@
     "default_icon": {
       "48": "images/footmark_cat_red1_48.png"
     },
-    "default_title": "FootStep",
+    "default_title": "Footstep",
     "default_popup": "main.html"
   },
   "icons": {
