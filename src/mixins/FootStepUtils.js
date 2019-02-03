@@ -1,7 +1,9 @@
+const ExportFileHeader = "FootStep LocalStrage Data.";
+
 export default {
   methods: {
     getCurrentTab : function(callback) {
-      var queryInfo = {
+      const queryInfo = {
         active: true,
         currentWindow: true
       };
@@ -11,12 +13,27 @@ export default {
       });
     },
     getNowYMD: function(){
-      var dt = new Date();
-      var y = dt.getFullYear();
-      var m = ("00" + (dt.getMonth()+1)).slice(-2);
-      var d = ("00" + dt.getDate()).slice(-2);
-      var result = y + "/" + m + "/" + d;
+      const dt = new Date();
+      const y = dt.getFullYear();
+      const m = ("00" + (dt.getMonth()+1)).slice(-2);
+      const d = ("00" + dt.getDate()).slice(-2);
+      const result = y + "/" + m + "/" + d;
       return result;
+    },
+    getExportFileHeader : function(){
+
+      const date = new Date();
+      const manifest = chrome.runtime.getManifest();
+
+      //1行目はヘッダ情報
+      const exportText = ExportFileHeader
+                    + "\tver:\t" + manifest.version
+                    + "\ttime:\t" + date.getTime();
+      return exportText;
+
+    },
+    checkImportFile : function(importText){
+      return importText.startsWith(ExportFileHeader);
     }
   }
 }

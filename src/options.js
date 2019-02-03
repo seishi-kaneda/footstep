@@ -1,11 +1,11 @@
 import Vue from 'vue'
-import Main from './Main.vue'
+import Options from './Options.vue'
 
 import FootStepUtils from './mixins/FootStepUtils';
 
 Vue.mixin(FootStepUtils);
 
 new Vue({
-  el: '#main',
-  render: h => h(Main)
+  el: '#options',
+  render: h => h(Options)
 })

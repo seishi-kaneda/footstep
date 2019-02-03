@@ -1,16 +1,16 @@
 
 
-const KeyStampedDays = "stampedDays";
+const KeyFootstepDays = "stampedDays";
 
-var stampedDays = [];
-var stampedDays_map = [];
-if (localStorage.getItem(KeyStampedDays)) {
-  stampedDays = JSON.parse(localStorage.getItem(KeyStampedDays));
+let footstepDays = [];
+const footstepDays_map = [];
+if (localStorage.getItem(KeyFootstepDays)) {
+  footstepDays = fromSaveString(localStorage.getItem(KeyFootstepDays));
 }
 
-for (var i=0; i<stampedDays.length; i++) {
-  var day = stampedDays[i];
-  stampedDays_map[day] = 1;
+for (let i=0; i<footstepDays.length; i++) {
+  const day = footstepDays[i];
+  footstepDays_map[day] = 1;
 }
 
 chrome.runtime.onMessage.addListener(
@@ -20,8 +20,8 @@ chrome.runtime.onMessage.addListener(
       dailydataList = getDailydataList(request.start, request.days);
       sendResponse(dailydataList);
 
-    } else if (request.message == "saveNewStamp") {
-      dailyData = saveNewStamp(request.day, request.stampData);
+    } else if (request.message == "saveNewMark") {
+      dailyData = saveNewMark(request.day, request.markData);
       sendResponse(dailyData);
     }
     return true;
@@ -31,12 +31,12 @@ chrome.runtime.onMessage.addListener(
 
 function getDailydataList(start, days) {
 
-  var ret = [];
-  for (var i=start; i<days; i++) {
-    var j = stampedDays.length - 1 - i;
-    var day = stampedDays[j];
+  const ret = [];
+  for (let i=start; i<days; i++) {
+    const j = footstepDays.length - 1 - i;
+    const day = footstepDays[j];
 
-    if (!localStorage[day]) {
+    if (!localStorage.getItem(day)) {
       //不整合データ
       continue;
     }
@@ -47,32 +47,33 @@ function getDailydataList(start, days) {
 
 
 /*
-stampData
+markData
 - count : Number //スタンプカウント
 - times : Array(Number) // フットスタンプした時点のUNIXタイムスタンプ
 - title : String //タイトル
 - url : String
 - favicon : String //お気に入りアイコンurl
 */
-function saveNewStamp(day, stampData) {
+function saveNewMark(day, markData) {
 
-  if (!stampedDays_map[day]) {
+  let dailyData;
+  if (!footstepDays_map[day]) {
     //未登録日の場合、日を登録
-    stampedDays_map[day] = 1;
-    stampedDays.push(day);
-    stampedDays.sort();
-    localStorage.setItem(KeyStampedDays, JSON.stringify(stampedDays));
+    footstepDays_map[day] = 1;
+    footstepDays.push(day);
+    footstepDays.sort();
+
+    localStorage.setItem(KeyFootstepDays, toSaveString(footstepDays));
 
     //１件登録
-    var dailyData = {
+    dailyData = {
       day:day,
-      stampList:[stampData]
+      markList:[markData]
     };
 
   } else {
     dailyData = getDailyData(day);
-    //先頭に追加
-    dailyData.stampList.unshift(stampData);
+    dailyData.markList.unshift(markData);
   }
 
   saveDailyData(dailyData);
@@ -80,13 +81,37 @@ function saveNewStamp(day, stampData) {
 }
 
 function getDailyData(day) {
-  var dailyData = {
+  if (!localStorage.getItem(day)) {
+    return null;
+  }
+
+  const loadData = fromSaveString(localStorage.getItem(day));
+
+  const dailyData = {
     day:day,
-    stampList:JSON.parse(localStorage.getItem(day))
+    markList:loadData
   }
   return dailyData;
 }
 
 function saveDailyData(dailyData) {
-  localStorage.setItem(dailyData.day, JSON.stringify(dailyData.stampList));
+  localStorage.setItem(dailyData.day, toSaveString(dailyData.markList));
+}
+
+function toSaveString(obj) {
+  return toBase64(JSON.stringify(obj));
+}
+
+function fromSaveString(str) {
+  return JSON.parse(fromBase64(str));
+}
+
+//to base64
+function toBase64(str) {
+  return window.btoa( unescape(encodeURIComponent( str )) );
+}
+
+//from base64
+function fromBase64(str) {
+  return decodeURIComponent( escape(window.atob( str )) );
 }

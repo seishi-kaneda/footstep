@@ -3,11 +3,14 @@ var webpack = require('webpack')
 
 module.exports = {
   watch: true,
-  entry: './src/main.js',
+  entry: {
+    main: './src/main.js',
+    options: './src/options.js'
+  },
   output: {
     path: path.resolve(__dirname, './extension/dist'),
     publicPath: '/extension/dist/',
-    filename: 'build.js'
+    filename: '[name].js'
   },
   module: {
     rules: [
@@ -35,7 +38,11 @@ module.exports = {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
         options: {
-          name: '[name].[ext]?[hash]'
+          name: '[name].[ext]?[hash]',
+          outputPath : 'images/',
+          publicPath : function(path){
+              return 'dist/images/' + path;
+          }
         }
       }
     ]
