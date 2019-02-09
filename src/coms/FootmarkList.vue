@@ -9,7 +9,7 @@
           </td>
         </tr>
         <tr class="footmark_row" v-for="(item, item_index) in dailyData.markList">
-          <td class="footmark_time">{{ timeFormat(item.times[0]) }}<br>{{ item.count }}</td>
+          <td class="footmark_time">{{ timeFormat(item.times[0]) }}</td>
           <td class="footmark_favicon">
             <FavIcon v-bind:iconUrl='item.favicon' />
           </td>
@@ -20,6 +20,7 @@
           </td>
           <td class="footmark_stamp">
             <FootmarkButton @click="stampFootmark(dailyData.day, item.url)" />
+            {{ item.count }}
           </td>
         </tr>
       </template>
@@ -59,7 +60,7 @@ export default {
       chrome.runtime.sendMessage({
           message: "getDailydataList",
           start: 0,
-          days: 3
+          days: 2
         },
         function(dailydataList) {
           me.dailydataList = dailydataList;
@@ -69,6 +70,8 @@ export default {
     stampFootmark: function(day, url) {
 console.log("1 day:" + day);
       const me = this;
+
+
       chrome.runtime.sendMessage({
           message: "countUpStamp",
           day: day,

@@ -38,7 +38,7 @@ export default {
   },
   data () {
     return {
-      isShowFootmarkList : false,
+      isShowFootmarkList : true,
       tabTitle: "",
       tabUrl: "",
       tabFavIconUrl: undefined
@@ -48,7 +48,7 @@ export default {
     const me = this;
     this.getCurrentTab(function(tab){
        me.tabTitle = tab.title;
-       me.tabFavIconUrl = tab.favIconUrl
+       me.tabFavIconUrl = tab.favIconUrl;
        me.tabUrl = tab.url;
     });
   },
