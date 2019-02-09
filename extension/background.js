@@ -23,6 +23,10 @@ chrome.runtime.onMessage.addListener(
     } else if (request.message == "saveNewMark") {
       dailyData = saveNewMark(request.day, request.markData);
       sendResponse(dailyData);
+
+    } else if (request.message == "countUpStamp") {
+      dailyData = countUpStamp(request.day, request.url);
+      sendResponse(dailyData);
     }
     return true;
   }
@@ -43,6 +47,21 @@ function getDailydataList(start, days) {
     ret.push(getDailyData(day));
   }
   return ret;
+}
+
+function countUpStamp(day, url) {
+  const dailyData = getDailyData(day);
+  const markList = dailyData.markList;
+  for (let i=0; i<markList.length; i++) {
+    if (markList[i].url == url) {
+      markList[i].count += 1;
+      markList[i].times.push(new Date().getTime());
+      saveDailyData(dailyData);
+      return dailyData;
+    }
+
+    return dailyData;
+  }
 }
 
 
@@ -99,11 +118,13 @@ function saveDailyData(dailyData) {
 }
 
 function toSaveString(obj) {
-  return toBase64(JSON.stringify(obj));
+//  return toBase64(JSON.stringify(obj));
+  return JSON.stringify(obj);
 }
 
 function fromSaveString(str) {
-  return JSON.parse(fromBase64(str));
+  return JSON.parse(str);
+//  return JSON.parse(fromBase64(str));
 }
 
 //to base64

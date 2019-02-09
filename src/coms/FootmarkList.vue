@@ -1,18 +1,26 @@
 <template>
 
   <div>
-    <table>
+    <table class="footmark_table">
       <template v-for="dailyData in dailydataList">
         <tr>
-          <td colspan="3" >
+          <td colspan="4" >
             <b>{{ dateFormat(dailyData.day) }}</b>
           </td>
         </tr>
-        <tr v-for="item in dailyData.markList">
-          <td align="left">{{ timeFormat(item.times[0]) }}</td>
-          <td><FavIcon v-bind:iconUrl='item.favicon' /></td>
-          <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
-          <td><FootmarkButton /></td>
+        <tr class="footmark_row" v-for="(item, item_index) in dailyData.markList">
+          <td class="footmark_time">{{ timeFormat(item.times[0]) }}<br>{{ item.count }}</td>
+          <td class="footmark_favicon">
+            <FavIcon v-bind:iconUrl='item.favicon' />
+          </td>
+          <td class="footmark_title">
+            <p v-bind:class="linkStyle(item.count)">
+              <a v-bind:href="item.url" target="_blank">{{ item.title }}</a>
+            </p>
+          </td>
+          <td class="footmark_stamp">
+            <FootmarkButton @click="stampFootmark(dailyData.day, item.url)" />
+          </td>
         </tr>
       </template>
     </table>
@@ -58,43 +66,37 @@ export default {
         }
       );
     },
-    // updateDailyData: function(dailyData) {
-    //   for (let i=0; i<me.dailydataList.length; i++) {
-    //     if (me.dailydataList[i].day == ymd) {
-    //       //データ更新
-    //       me.$set(me.dailydataList, i, dailyData);
-    //       break;
-    //     }
-    //   }
-    // },
-    clickNewMark: function () {
+    stampFootmark: function(day, url) {
+console.log("1 day:" + day);
       const me = this;
-
-      const ymd = this.getNowYMD();
-      const markData = {
-        count:1,
-        times:[new Date().getTime()],
-        title:this.tabTitle,
-        url:this.tabUrl,
-        favicon:this.tabFavIconUrl
-      }
-
       chrome.runtime.sendMessage({
-          message: "saveNewMark",
-          day: ymd,
-          markData: markData
+          message: "countUpStamp",
+          day: day,
+          url: url
         },
+        //保存後イベント
         function(dailyData) {
+console.log("2 day:" + day);
 
           for (let i=0; i<me.dailydataList.length; i++) {
-            if (me.dailydataList[i].day == ymd) {
-              //データ更新
-              me.$set(me.dailydataList, i, dailyData);
-              break;
+console.log("3 day:" + me.dailydataList[i].day);
+            if (me.dailydataList[i].day == day) {
+              me.dailydataList[i] = dailyData;
+              return;
             }
           }
         }
       );
+
+      // for (let i=0; i<me.dailydataList.length; i++) {
+      //   if (me.dailydataList[i].day == day) {
+      //     //データ更新
+      //     me.$set(me.dailydataList, i, dailyData);
+      //     break;
+      //   }
+      // }
+      //
+
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);
@@ -112,6 +114,10 @@ export default {
       const w = WeekChars[date.getDay()];
 
       return y + "年" + m + "月" + d + "日" + "（" + w + "）";
+    },
+    linkStyle : function (count) {
+      const styles = ["link1", "link2", "link3", "link4", "link5"];
+      return styles[count-1];
     }
   }
 }
@@ -123,6 +129,8 @@ export default {
 
 <style>
 @import '../styles/FootStepStyle.css';
+
+
 
 
 </style>

@@ -1,11 +1,17 @@
 <template>
   <div id="main">
-    <table>
+    <table class="footmark_table">
       <tr>
-        <td></td>
-        <td><FavIcon v-bind:iconUrl='tabFavIconUrl' /></td>
-        <td><input class="inputStyle" v-model="tabTitle"></td>
-        <td><FootmarkButton @click="clickNewMark" /></td>
+        <td class="footmark_time"></td>
+        <td class="footmark_favicon">
+          <FavIcon v-bind:iconUrl='tabFavIconUrl' />
+        </td>
+        <td class="footmark_title">
+          <input class="input_title" v-model="tabTitle">
+        </td>
+        <td class="footmark_stamp">
+          <FootmarkButton @click="clickNewMark" />
+        </td>
       </tr>
     </table>
     <template v-if="isShowFootmarkList">
