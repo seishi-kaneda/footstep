@@ -10,6 +10,8 @@
 
 <br>
 <br>
+<button @click="newBookmarks">ブックマーク作成</button>
+<button @click="clearBookmarks">ブックマーク　クリア</button>
 
 
 
@@ -124,6 +126,60 @@ export default {
       //テキスト形式で読み込む
       reader.readAsText(targetFile);
 
+
+    },
+    newBookmarks: function(e) {
+
+      //Footstepディレクトリ取得
+      const KeyFootstepFolderId = "KeyFootstepFolderId";
+      const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+
+      const startTime = Date.now();
+
+      for (let y=2019; y<2020; y++) {
+        chrome.bookmarks.create(
+          {'parentId': footstepDirId, 'title': String(y)},
+          function(yearFolder) {
+            console.log('' + (Date.now() - startTime) + " 作成:" + y);
+
+            for (let m=7; m<9; m++) {
+              chrome.bookmarks.create(
+                {'parentId': yearFolder.id, 'title': String(m)},
+                function(monthFolder) {
+                  console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m);
+
+                  for (let d=1; d<31; d++) {
+                    chrome.bookmarks.create(
+                      {'parentId': monthFolder.id, 'title': String(d)},
+                      function(dayFolder) {
+                        console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d);
+
+                        for (let i=1; i<100; i++) {
+                          chrome.bookmarks.create(
+                            {'parentId': dayFolder.id,
+                            'title': 'RGBと16進数カラーコードの相互変換ツール - PEKO STEP',
+                            'url': 'https://stackoverflow.com/questions/10257301/where-to-read-console-messages-from-background-js-in-a-chrome-extension'},
+                            function(obj) {
+                              console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d + " " + i);
+                            }
+                          );
+                        }
+                      }
+                    );
+                  }
+                }
+              );
+            }
+          }
+        );
+
+      }
+
+
+    },
+    clearBookmarks: function(e) {
+      const KeyFootstepFolderId = "KeyFootstepFolderId";
+      localStorage.removeItem(KeyFootstepFolderId);
 
     }
   }

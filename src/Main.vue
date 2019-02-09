@@ -1,5 +1,9 @@
 <template>
   <div id="main">
+    <a href="options.html">オプション</a>
+    <br>
+    <br>
+
     <table class="footmark_table">
       <tr>
         <td class="footmark_time"></td>

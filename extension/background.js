@@ -1,6 +1,41 @@
 
 
+//拡張インストール時 or chrome起動後Footstep初回起動時 の処理
+
+
 const KeyFootstepDays = "stampedDays";
+
+
+
+//Footstepディレクトリ取得
+const KeyFootstepFolderId = "KeyFootstepFolderId";
+let footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+if (!footstepDirId) {
+  //未登録なら、登録
+  chrome.bookmarks.create(
+    {'title': "Footstep"},
+    function(newFolder) {
+      const footstepDirId = newFolder.id;
+      localStorage.setItem(KeyFootstepFolderId, footstepDirId);
+
+      alert("Footstepフォルダ作成：" + footstepDirId);
+      console.log("added folder: " + footstepDirId);
+    }
+  );
+}
+
+
+
+
+//
+//
+// chrome.bookmarks.create({
+//   'title': 'Extensions doc'
+// });
+
+
+
+
 
 let footstepDays = [];
 const footstepDays_map = [];
