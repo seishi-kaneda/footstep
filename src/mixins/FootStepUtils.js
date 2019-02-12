@@ -2,6 +2,8 @@ const ExportFileHeader = "FootStep LocalStrage Data.";
 
 const KeyFootstepFolderId = "KeyFootstepFolderId";
 
+const MaxStampCount = 5;
+
 const TitleSplitChar = '^';
 
 export default {
@@ -16,16 +18,14 @@ export default {
         callback(tabs[0]);
       });
     },
-    saveFootmark: function(footmark, callback) {
-
-    },
     /**
-    * ブックマーク(またhディレクトリ）を作成or取得。
+    * ブックマーク(またディレクトリ）を作成or取得。
     *
     * @param {object{parentId,url,title}} bookmark ブックマーク情報
+    * @param {bool} doCreate 無かった場合、作成する
     * @param {fuction(node)} callback コールバック
     */
-    getOrCreateBookmark: function(bookmark, callback) {
+    getBookmark: function(bookmark, doCreate, callback) {
       //フォルダー取得
       chrome.bookmarks.getSubTree(bookmark.parentId, (nodes) => {
         let retNode = undefined;
@@ -47,15 +47,22 @@ export default {
         }
         //見つからなかった場合、作成
         if (retNode == undefined) {
-          chrome.bookmarks.create(
-            bookmark,
-            function(newNode) {
-              callback[newNode];
-            }
-          );
+          if (doCreate) {
+            chrome.bookmarks.create(
+              bookmark,
+              function(newNode) {
+                //見つからなかった、作った
+                callback(newNode);
+              }
+            );
+          } else {
+            //見つからなかった、作らなかった
+            callback(undefined);
+          }
         //見つかった場合、終了
         } else {
-          callback[retNode];
+          //見つかった
+          callback(retNode);
         }
       });
     },
@@ -66,49 +73,86 @@ export default {
       const mm = ymd.substring(4, 6);
       const dd = ymd.substring(6, 8);
 
-      //年ディレクトリを取得
-      getOrCreateBookmark({'parentId':footstepDirId, 'title':yy},
+      //年ディレクトリを取得or作成
+      getBookmark({'parentId':footstepDirId, 'title':yy}, true,
         function(yyNode){
-          //月ディレクトリを取得
-          getOrCreateBookmark({'parentId':yyNode.id, 'title':mm},
+          //月ディレクトリを取得or作成
+          getBookmark({'parentId':yyNode.id, 'title':mm}, true,
             function(mmNode){
-              //日ディレクトリを取得
-              getOrCreateBookmark({'parentId':mmNode.id, 'title':dd},
+              //日ディレクトリを取得or作成
+              getBookmark({'parentId':mmNode.id, 'title':dd}, true,
                 function(ddNode){
                   callback(ddNode);
                 });
             });
         });
-    },
-    stampFootmark2: function(footmark) {
+    }, getSameBookmarkToday: function(url, callback) {
 
-      //今日ディレクトリを検索
+      //今日ディレクトリを取得or作成
       const today = new Date();
       const ymdToday = this.getYmd(today);
       this.getOrCreateYmdFolder(ymdToday, function(nodeToday) {
 
-        //今日ディレクトリ内に、同じurlが無いか検索
-        
-
+        //今日ブックマークリストを取得
+        chrome.bookmarks.getSubTree(bookmark.parentId, (nodes) => {
+          for (let i=0; i<nodes.length; i++) {
+            const bookmark = nodes[i];
+            if (bookmark.url == url) {
+              //同じurlのブックマークが見つかった
+              callback(nodeToday, bookmark);
+              break;
+            }
+          }
+          //見つからなかった
+          callback(nodeToday, undefined);
+        });
       });
+    },
+    stampFootmark2: function(footmark, callback) {
 
+      //今日Bookmarkに同じurlがあれば取得
+      this.getBookmarkToday(url, (nodeToday, bookmark) => {
 
-      //bookmarkオブジェクトに変換
-      const bookmark = this.bookFromFoot(footmark);
+        //今日ディレクトリ内に同じurlが無ければ、ブックマーク新規保存
+        if (bookmark == undefined) {
+          const newBookmark = this.bookFromFoot(footmark);
+          chrome.bookmarks.create({'parentId': nodeToday.id,
+                                   'title': newBookmark.title,
+                                   'url': newBookmark.url
+                                 },function(createdBookmark) {
+            //【あとで対応】その日のリストを更新して返却
+            callback(createdBookmark);
+            return;
+          });
 
+          //今日ディレクトリ内に同じurlがあれば、ブックマーク更新
+        } else {
+          const tmpFootmark = this.footFromBook(bookmark);
 
-      //今日のデータの場合、日付はそのまま
-      if (footmark.ymd == ymdToday) {
+          //最大カウントチェック
+          if (tmpFootmark.stampCount >= MaxStampCount) {
+            //【あとで対応】その日のリストを更新して返却
+            callback(bookmark);
+            return;
+          }
 
-      //昨日以前データの場合、日付を今日に変更。
-      } else {
-
-      }
+          tmpFootmark.stampCount++;
+          const tmpBookmark = bookFromFoot(tmpFootmark);
+          chrome.bookmarks.update(
+            tmpBookmark.id,
+            {'title': tmpBookmark.title},
+            function(updatedBookmark) {
+              //【あとで対応】その日のリストを更新して返却
+              callback(updatedBookmark);
+              return;
+            });
+        }
+      });
     },
     bookFromFoot: function(footmark) {
       const bookmark = {
         'id': footmark.bookmarkId,
-        'url': footmark.URL,
+        'url': footmark.url,
         'dateAdded':footmark.dateAdded
       };
 
@@ -116,7 +160,21 @@ export default {
           + TitleSplitChar + footmark.title
           + TitleSplitChar + footmark.title
           ;
+      return bookmark;
+    },
+    footFromBook: function(bookmark) {
+      const footmark = {
+        'bookmarkId': bookmark.id,
+        'url': bookmark.url,
+        'dateAdded': bookmark.dateAdded,
+        'ymd': this.getYmd(new Date(bookmark.dateAdded))
+      };
 
+      const params = bookmark.title.split(TitleSplitChar);
+      footmark.title = params[0];
+      footmark.stampCount = parseInt(params[1]);
+      footmark.faviconUrl = params[2];
+      return footmark;
     },
     getYmd: function(date) {
       const yy = date.getFullYear();
@@ -124,6 +182,11 @@ export default {
       const dd = ("00" + dt.getDate()).slice(-2);
       const result = yy + mm + dd;
       return result;
+    },
+    getFootmarksByDays: function(startYmd, dayCount, callback) {
+    },
+    createYmdList: function() {
+
     },
     getNowYMD: function(){
       const dt = new Date();
