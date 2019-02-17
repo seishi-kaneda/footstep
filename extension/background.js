@@ -26,17 +26,6 @@ if (!footstepDirId) {
 
 
 
-
-//
-//
-// chrome.bookmarks.create({
-//   'title': 'Extensions doc'
-// });
-
-
-
-
-
 let footstepDays = [];
 const footstepDays_map = [];
 if (localStorage.getItem(KeyFootstepDays)) {

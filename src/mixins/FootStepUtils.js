@@ -110,8 +110,29 @@ export default {
     },
     stampFootmark2: function(footmark, callback) {
 
+      const today = new Date();
+      const ymdToday = this.getYmd(today);
+
+
+      if (footmark.bookmarkId == undefined || footmark.ymd != ymdToday) {
+        //新規または過去の場合、今日データの存在チェック。新規作成
+
+      } else {
+        //今日データの場合、スタンプをカウントアップして更新
+
+      }
+
+      if (footmark.ymd == ymdToday) {
+        //今日データの場合、スタンプ回数アップで更新
+      } else {
+        //今日データではない場合、
+          // 新規作成
+
+      }
+
+
       //今日Bookmarkに同じurlがあれば取得
-      this.getBookmarkToday(url, (nodeToday, bookmark) => {
+      this.getSameBookmarkToday(url, (nodeToday, bookmark) => {
 
         //今日ディレクトリ内に同じurlが無ければ、ブックマーク新規保存
         if (bookmark == undefined) {
@@ -125,7 +146,7 @@ export default {
             return;
           });
 
-          //今日ディレクトリ内に同じurlがあれば、ブックマーク更新
+          //今日ディレクトリ内に同じurlがあれば、そのスタンプ回数をカウントアップ。
         } else {
           const tmpFootmark = this.footFromBook(bookmark);
 
@@ -186,6 +207,36 @@ export default {
     getFootmarksByDays: function(startYmd, dayCount, callback) {
     },
     createYmdList: function() {
+
+      const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+
+      // //フォルダー取得
+      // chrome.bookmarks.getSubTree(footstepDirId, (yNodes) => {
+      //   let retNode = undefined;
+      //   for (let i=0; i<yNodes.length; i++) {
+      //
+      //   }
+      // });
+
+
+      //
+      // const yy = ymd.substring(0, 4);
+      // const mm = ymd.substring(4, 6);
+      // const dd = ymd.substring(6, 8);
+      //
+      // //年ディレクトリを取得or作成
+      // getBookmark({'parentId':footstepDirId, 'title':yy}, true,
+      //   function(yyNode){
+      //     //月ディレクトリを取得or作成
+      //     getBookmark({'parentId':yyNode.id, 'title':mm}, true,
+      //       function(mmNode){
+      //         //日ディレクトリを取得or作成
+      //         getBookmark({'parentId':mmNode.id, 'title':dd}, true,
+      //           function(ddNode){
+      //             callback(ddNode);
+      //           });
+      //       });
+      //   });
 
     },
     getNowYMD: function(){
