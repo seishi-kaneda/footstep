@@ -186,22 +186,45 @@ export default {
 
     },
     testFunc: async function(e) {
-      const KeyFootstepFolderId = "KeyFootstepFolderId";
-      const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+      const start = new Date().getTime();
 
-      let long_title = "";
-      for (let i=0; i<500; i++) {
-        long_title += "１２３４５６７８９０";
+      const nodes0 = await this.apiBookmarksGetChildren("0");
+
+      for (let i=0; i<nodes0.length; i++) {
+        const nodes1 = await this.apiBookmarksGetChildren(nodes0[i].id);
+        for (let j=0; j<nodes1.length; j++) {
+          if(nodes1[j].title == "Footstep") {
+            console.log("found!");
+            console.dir(nodes1[j]);
+            break;
+          }
+        }
       }
+      const end = new Date().getTime();
+      console.log("time:" + (end - start));
 
-      console.log("1");
+      // const nodes = await this.apiBookmarksGetChildren();
+      //
+      // for (let i=0; i<nodes.length; i++) {
+      //   console.log("i:" + nodes[i].title);
+      // }
 
-      console.log("arg len:" + long_title.length);
-      const node = {'parentId': footstepDirId, 'title': long_title, 'url': "https://www.yahoo.co.jp/"};
-      const ret = await this.apiBookmarksCreate(node);
-      console.log("ret url:" + ret.url);
-      console.log("ret len:" + ret.title.length);
-      console.log("4");
+      // const KeyFootstepFolderId = "KeyFootstepFolderId";
+      // const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+      //
+      // let long_title = "";
+      // for (let i=0; i<500; i++) {
+      //   long_title += "１２３４５６７８９０";
+      // }
+      //
+      // console.log("1");
+      //
+      // console.log("arg len:" + long_title.length);
+      // const node = {'parentId': footstepDirId, 'title': long_title, 'url': "https://www.yahoo.co.jp/"};
+      // const ret = await this.apiBookmarksCreate(node);
+      // console.log("ret url:" + ret.url);
+      // console.log("ret len:" + ret.title.length);
+      // console.log("4");
     }
 
   }
