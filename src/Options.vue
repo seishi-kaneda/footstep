@@ -175,10 +175,7 @@ export default {
             }
           }
         );
-
       }
-
-
     },
     clearBookmarks: function(e) {
       const KeyFootstepFolderId = "KeyFootstepFolderId";

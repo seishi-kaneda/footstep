@@ -14,7 +14,7 @@ export default {
     createYmdList: async function() {
       const ymdList = [];
 
-      const footstepDirNode = this.getFootstepSystemFolder();
+      const footstepDirNode = await this.getFootstepSystemFolder();
 
       const yyNodes = await this.apiBookmarksGetChildren(footstepDirNode.id);
       for (let y=0; y<yyNodes.length; y++) {
@@ -44,7 +44,7 @@ export default {
     getDailyListForDays: async function(startYmd, dayCount) {
 
       const targetYmdList = [];
-      const allYmdList = this.createYmdList();
+      const allYmdList = await this.createYmdList();
 
       for (let i=0; i<allYmdList.length; i++) {
         const ymd = allYmdList[i];
@@ -61,7 +61,7 @@ export default {
         const ymd = targetYmdList[i];
         const dailyData = {
           'ymd': ymd,
-          'footmarkList': this.getFootmarkListOnDay(ymd)
+          'footmarkList': await this.getFootmarkListOnDay(ymd)
         }
         dailyList.push(dailyData);
       }
@@ -70,7 +70,7 @@ export default {
     getFootmarkListOnDay: async function(ymd) {
 
       const footmarks = [];
-      const dir = this.getOrCreateYmdDir(ymd, false);
+      const dir = await this.getOrCreateYmdDir(ymd, false);
       if (dir != undefined) {
         const bookmarks = await this.apiBookmarksGetChildren(dir.id);
         for (let i=0; i<bookmarks.length; i++) {
@@ -84,12 +84,11 @@ export default {
     *
     * @param {object{parentId,url,title}} bookmark ブックマーク情報
     * @param {bool} doCreate 無かった場合、作成する
-    * @param {fuction(node)} callback コールバック
     */
     getOrCreateBookmark: async function(bookmark, doCreate) {
 
       //子ノード取得
-      const nodes = await apiBookmarksGetChildren(bookmark.parentId);
+      const nodes = await this.apiBookmarksGetChildren(bookmark.parentId);
       for (let i=0; i<nodes.length; i++) {
         const node = nodes[i];
         //url指定が無いならフォルダー:title一致
@@ -127,48 +126,48 @@ export default {
       }
 
       //見つからなかったら作成
-      const newNode = await apiBookmarksCreate({'title':FootstepFolderName}});
+      const newNode = await this.apiBookmarksCreate({'title':FootstepFolderName});
       return newNode;
     },
     getOrCreateYmdDir: async function(ymd, doCreate) {
+      console.log("getOrCreateYmdDir s ymd:" + ymd);
       const yy = ymd.substring(0, 4);
       const mm = ymd.substring(4, 6);
       const dd = ymd.substring(6, 8);
 
-      const footstepDirNode = this.getFootstepSystemFolder();
+      const footstepDirNode = await this.getFootstepSystemFolder();
 
       if (doCreate) {
-
-        const yyNode = getOrCreateBookmark({'parentId':footstepDirNode.id, 'title':yy}, false);
+        const yyNode = await this.getOrCreateBookmark({'parentId':footstepDirNode.id, 'title':yy}, true);
+        const mmNode = await this.getOrCreateBookmark({'parentId':yyNode.id, 'title':mm}, true);
+        const ddNode = await this.getOrCreateBookmark({'parentId':mmNode.id, 'title':dd}, true);
+        return ddNode;
+      } else {
+        const yyNode = await this.getOrCreateBookmark({'parentId':footstepDirNode.id, 'title':yy}, false);
         if (yyNode == undefined) {
           return undefined;
         }
-        const mmNode = getOrCreateBookmark({'parentId':yyNode.id, 'title':mm}, false);
+        const mmNode = await this.getOrCreateBookmark({'parentId':yyNode.id, 'title':mm}, false);
         if (mmNode == undefined) {
           return undefined;
         }
-        const ddNode = getOrCreateBookmark({'parentId':mmNode.id, 'title':dd}, false);
-        return ddNode;
-
-      } else {
-
-        const yyNode = getOrCreateBookmark({'parentId':footstepDirNode.id, 'title':yy}, true);
-        const mmNode = getOrCreateBookmark({'parentId':yyNode.id, 'title':mm}, true);
-        const ddNode = getOrCreateBookmark({'parentId':mmNode.id, 'title':dd}, true);
+        const ddNode = await this.getOrCreateBookmark({'parentId':mmNode.id, 'title':dd}, false);
         return ddNode;
       }
 
     },
     //スタンプ処理
     stampFootmark: async function(footmark) {
-
+console.log("stampFootmark s");
       //今日ディレクトリを取得or作成
       const today = new Date();
       const ymdToday = this.getYmd(today);
-      const todayDir = this.getOrCreateYmdDir(ymdToday, true);
-
+      const todayDir = await this.getOrCreateYmdDir(ymdToday, true);
+console.dir(todayDir);
       //今日ディレクトリから同じurlのブックマークを探索
-      const todayBookmarks = await apiBookmarksGetChildren(todayDir.id);
+      const todayBookmarks = await this.apiBookmarksGetChildren(todayDir.id);
+console.dir(todayBookmarks);
+
       let sameBookmark = undefined;
       for (let i=0; i<todayBookmarks.length; i++) {
         const node = todayBookmarks[i];
@@ -183,7 +182,7 @@ export default {
 
         const newBookmark = this.bookFromFoot(footmark);
         const createdBookmark = await this.apiBookmarksCreate(
-                              {'parentId': ddNode.id,
+                              {'parentId': todayDir.id,
                                  'title': newBookmark.title,
                                  'url': newBookmark.url
                                });
@@ -193,7 +192,7 @@ export default {
       } else {
 
         //最大カウントチェック
-        const tmpFootmark = this.footFromBook(bookmark);
+        const tmpFootmark = this.footFromBook(sameBookmark);
         if (tmpFootmark.stampCount >= MaxStampCount) {
           //最大の場合、更新せず終了
           return;
@@ -201,7 +200,7 @@ export default {
 
         //カウントアップ
         tmpFootmark.stampCount++;
-        const tmpBookmark = bookFromFoot(tmpFootmark);
+        const tmpBookmark = this.bookFromFoot(tmpFootmark);
 
         const updatedBookmark = await this.apiBookmarksUpdate(
                       tmpBookmark.id,
@@ -225,7 +224,8 @@ export default {
           + TitleSplitChar + "" //予約5
           + TitleSplitChar + "" //予約6
           + TitleSplitChar + "" //予約7
-          + TitleSplitChar + footmark.faviconUrl
+          + TitleSplitChar
+            + (footmark.faviconUrl==undefined ? "" : footmark.faviconUrl)
           + TitleSplitChar + footmark.stampCount
           ;
       return bookmark;
@@ -263,8 +263,8 @@ export default {
 
         //stampCountの数値チェック
         let stampCount = parseInt(params[TitleParamLength-1]);
-        if (isNan(stampCount)
-            || stampCount < 1
+        if (isNaN(stampCount)
+            || stampCount < 0
             || stampCount > MaxStampCount) {
           stampCount = 1;
         }
@@ -274,8 +274,8 @@ export default {
     },
     getYmd: function(date) {
       const yy = date.getFullYear();
-      const mm = ("00" + (dt.getMonth()+1)).slice(-2);
-      const dd = ("00" + dt.getDate()).slice(-2);
+      const mm = ("00" + (date.getMonth()+1)).slice(-2);
+      const dd = ("00" + date.getDate()).slice(-2);
       const result = yy + mm + dd;
       return result;
     },

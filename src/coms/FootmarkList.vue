@@ -19,7 +19,7 @@
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton @click="stampFootmark(dailyData.day, item.url)" />
+            <FootmarkButton @click="stamp(dailyData.day, item.url)" />
             {{ item.count }}
           </td>
         </tr>
@@ -67,7 +67,7 @@ export default {
         }
       );
     },
-    stampFootmark: function(day, url) {
+    stamp: function(day, url) {
 console.log("1 day:" + day);
       const me = this;
 

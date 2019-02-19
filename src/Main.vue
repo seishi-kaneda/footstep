@@ -31,13 +31,14 @@
 import FootmarkList from './coms/FootmarkList';
 import FootmarkButton from './coms/FootmarkButton';
 import FootStepUtils from './mixins/FootStepUtils';
+import BookmarksStorage from './mixins/BookmarksStorage';
 import FavIcon from './coms/FavIcon';
 
 
 export default {
   name: 'main',
   components: { FootmarkList, FootmarkButton, FavIcon },
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, BookmarksStorage ],
   props: {
   },
   data () {
@@ -48,47 +49,30 @@ export default {
       tabFavIconUrl: undefined
     }
   },
-  mounted () {
-    const me = this;
-    this.getCurrentTab(function(tab){
-       me.tabTitle = tab.title;
-       me.tabFavIconUrl = tab.favIconUrl;
-       me.tabUrl = tab.url;
-    });
-  },
+  async mounted () {
+    const tab = await this.getCurrentTab();
+    this.tabTitle = tab.title;
+    this.tabFavIconUrl = tab.favIconUrl;
+    this.tabUrl = tab.url;
+},
   methods: {
     recentFootmark: function() {
       this.isShowFootmarkList = true;
     },
-    clickNewMark: function () {
-      const me = this;
+    clickNewMark: async function () {
 
-      const ymd = this.getNowYMD();
-      const markData = {
-        count:1,
-        times:[new Date().getTime()],
-        title:this.tabTitle,
-        url:this.tabUrl,
-        favicon:this.tabFavIconUrl
-      }
+      const footmark = {
+        'title':this.tabTitle,
+        'url':this.tabUrl,
+        'favicon':this.tabFavIconUrl,
+        'stampCount':1
+      };
 
-      chrome.runtime.sendMessage({
-          message: "saveNewMark",
-          day: ymd,
-          markData: markData
-        },
-        //保存後イベント
-        function(dailyData) {
+      const newFootmark = await this.stampFootmark(footmark);
 
-          if (me.isShowFootmarkList) {
-            me.$refs.footmarkList.reload();
-//            me.$refs.footmarkList.updateDailyData(dailyData);
-          } else {
-            me.isShowFootmarkList = true;
-          }
-        }
-      );
-    },
+      //リロード
+      this.$refs.footmarkList.reload();
+    }
   }
 }
 

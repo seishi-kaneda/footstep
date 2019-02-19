@@ -12,15 +12,14 @@ const TitleSplitChar = '^';
 export default {
   mixins: [ ApiPromised ],
   methods: {
-    getCurrentTab : function(callback) {
+    getCurrentTab : async function(callback) {
       const queryInfo = {
         active: true,
         currentWindow: true
       };
 
-      chrome.tabs.query(queryInfo, (tabs) => {
-        callback(tabs[0]);
-      });
+      const tabs = await this.apiTabsQuery(queryInfo);
+      return tabs[0];
     }
   }
 }
