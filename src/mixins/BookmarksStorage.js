@@ -12,7 +12,7 @@ export default {
   mixins: [ ApiPromised ],
   methods: {
     createYmdList: async function() {
-      const ymdList = [];
+      const ymdList = new Array();
 
       const footstepDirNode = await this.getFootstepSystemFolder();
 
@@ -35,11 +35,17 @@ export default {
         }
       }
 
-      //降順ソート
-      ymdList.sort(function(a, b) {
-        return a > b;
-      })
+      ymdList.sort( function(a, b) {
+        return b - a;
+      });
+
       return ymdList;
+    },
+    sortDesc: function(arg) {
+      arg.sort( function(a, b) {
+        return a < b;
+      });
+      return arg;
     },
     getDailyListForDays: async function(startYmd, dayCount) {
 
