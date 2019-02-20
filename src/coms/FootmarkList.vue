@@ -19,7 +19,7 @@
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton @click="stamp(dailyData.ymd, item.url)" />
+            <FootmarkButton @click="stamp(dailyData.ymd, item.url, item.title)" />
             {{ item.stampCount }}
           </td>
         </tr>
@@ -56,38 +56,18 @@ export default {
 
       this.dailydataList = await this.getDailyListForDays(0, 2);
     },
-    stamp: function(day, url) {
-console.log("1 day:" + day);
-      const me = this;
+    stamp: async function(day, url, title) {
 
+      const footmark = {
+        'title':title,
+        'url':url,
+        'stampCount':1
+      };
 
-      chrome.runtime.sendMessage({
-          message: "countUpStamp",
-          day: day,
-          url: url
-        },
-        //保存後イベント
-        function(dailyData) {
-console.log("2 day:" + day);
+      const newFootmark = await this.stampFootmark(footmark);
 
-          for (let i=0; i<me.dailydataList.length; i++) {
-console.log("3 day:" + me.dailydataList[i].day);
-            if (me.dailydataList[i].day == day) {
-              me.dailydataList[i] = dailyData;
-              return;
-            }
-          }
-        }
-      );
-
-      // for (let i=0; i<me.dailydataList.length; i++) {
-      //   if (me.dailydataList[i].day == day) {
-      //     //データ更新
-      //     me.$set(me.dailydataList, i, dailyData);
-      //     break;
-      //   }
-      // }
-      //
+      //リロード
+      this.dailydataList = await this.getDailyListForDays(0, 2);
 
     },
     timeFormat : function(unixtime){

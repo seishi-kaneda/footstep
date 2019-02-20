@@ -41,12 +41,6 @@ export default {
 
       return ymdList;
     },
-    sortDesc: function(arg) {
-      arg.sort( function(a, b) {
-        return a < b;
-      });
-      return arg;
-    },
     getDailyListForDays: async function(startYmd, dayCount) {
 
       const targetYmdList = [];
@@ -164,15 +158,12 @@ export default {
     },
     //スタンプ処理
     stampFootmark: async function(footmark) {
-console.log("stampFootmark s");
       //今日ディレクトリを取得or作成
       const today = new Date();
       const ymdToday = this.getYmd(today);
       const todayDir = await this.getOrCreateYmdDir(ymdToday, true);
-console.dir(todayDir);
       //今日ディレクトリから同じurlのブックマークを探索
       const todayBookmarks = await this.apiBookmarksGetChildren(todayDir.id);
-console.dir(todayBookmarks);
 
       let sameBookmark = undefined;
       for (let i=0; i<todayBookmarks.length; i++) {
