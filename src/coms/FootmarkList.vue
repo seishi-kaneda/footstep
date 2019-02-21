@@ -55,17 +55,6 @@ export default {
 
       this.dailydataList = await this.getDailyListForDays(0, 2);
     },
-    // stamp: async function(day, url, title) {
-    //   const footmark = {
-    //     'title':title,
-    //     'url':url,
-    //     'stampCount':1
-    //   };
-    //   //スタンプ
-    //   const newFootmark = await this.stampFootmark(footmark);
-    //   //リロード
-    //   this.dailydataList = await this.getDailyListForDays(0, 2);
-    // },
     stamp: async function(item) {
       console.dir(item);
       //スタンプ

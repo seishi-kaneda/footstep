@@ -58,7 +58,7 @@ export default {
         'faviconUrl':this.tabFavIconUrl,
         'stampCount':1
       };
-
+      //作成
       const newFootmark = await this.stampFootmark(footmark);
 
       //リロード
