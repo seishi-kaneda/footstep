@@ -1,6 +1,6 @@
 <template>
 
-  <div>
+  <div class="list_div">
     <table class="footmark_table">
       <template v-for="dailyData in dailydataList">
         <tr>
@@ -94,7 +94,12 @@ export default {
 <style>
 @import '../styles/FootStepStyle.css';
 
+div.list_div {
 
+  width: 700px;
+  height: 400px;
+  overflow-y: scroll;
+}
 
 
 </style>
