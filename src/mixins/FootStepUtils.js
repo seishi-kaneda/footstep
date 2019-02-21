@@ -1,39 +1,50 @@
+import ApiPromised from './ApiPromised';
+
+
 const ExportFileHeader = "FootStep LocalStrage Data.";
 
+const KeyFootstepFolderId = "KeyFootstepFolderId";
+
+const MaxStampCount = 5;
+
+const TitleSplitChar = '^';
+
 export default {
+  mixins: [ ApiPromised ],
   methods: {
-    getCurrentTab : function(callback) {
+    getCurrentTab : async function(callback) {
       const queryInfo = {
         active: true,
         currentWindow: true
       };
 
-      chrome.tabs.query(queryInfo, (tabs) => {
-        callback(tabs[0]);
-      });
+      const tabs = await this.apiTabsQuery(queryInfo);
+      return tabs[0];
     },
-    getNowYMD: function(){
-      const dt = new Date();
-      const y = dt.getFullYear();
-      const m = ("00" + (dt.getMonth()+1)).slice(-2);
-      const d = ("00" + dt.getDate()).slice(-2);
-      const result = y + "/" + m + "/" + d;
+    getYmd: function(date) {
+      const yy = date.getFullYear();
+      const mm = ("00" + (date.getMonth()+1)).slice(-2);
+      const dd = ("00" + date.getDate()).slice(-2);
+      const result = yy + mm + dd;
       return result;
     },
-    getExportFileHeader : function(){
+    checkYmd: function(yy, mm, dd) {
+      if(yy==null || yy.length != 4 || isNaN(yy)){
+        return false;
+      }
+      if(mm==null || mm.length != 2 || isNaN(mm)){
+        return false;
+      }
+      if(dd==null || dd.length != 2 || isNaN(dd)){
+        return false;
+      }
 
-      const date = new Date();
-      const manifest = chrome.runtime.getManifest();
+      var y = parseInt(yy);
+      var m = parseInt(mm)-1;  //月は0～11で指定するため-1しています。
+      var d = parseInt(dd);
+      var dt = new Date(y, m, d);
 
-      //1行目はヘッダ情報
-      const exportText = ExportFileHeader
-                    + "\tver:\t" + manifest.version
-                    + "\ttime:\t" + date.getTime();
-      return exportText;
-
-    },
-    checkImportFile : function(importText){
-      return importText.startsWith(ExportFileHeader);
+      return (y == dt.getFullYear() && m == dt.getMonth() && d == dt.getDate());
     }
   }
 }

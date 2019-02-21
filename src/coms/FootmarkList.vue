@@ -5,22 +5,21 @@
       <template v-for="dailyData in dailydataList">
         <tr>
           <td colspan="4" >
-            <b>{{ dateFormat(dailyData.day) }}</b>
+            <b>{{ dateFormat(dailyData.ymd) }}</b>
           </td>
         </tr>
-        <tr class="footmark_row" v-for="(item, item_index) in dailyData.markList">
-          <td class="footmark_time">{{ timeFormat(item.times[0]) }}</td>
+        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarkList">
+          <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
           <td class="footmark_favicon">
-            <FavIcon v-bind:iconUrl='item.favicon' />
+            <FavIcon v-bind:iconUrl='item.faviconUrl' />
           </td>
           <td class="footmark_title">
-            <p v-bind:class="linkStyle(item.count)">
+            <p v-bind:class="linkStyle(item.stampCount)">
               <a v-bind:href="item.url" target="_blank">{{ item.title }}</a>
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton @click="stampFootmark(dailyData.day, item.url)" />
-            {{ item.count }}
+            <FootmarkButton @click="stamp(item)" />
           </td>
         </tr>
       </template>
@@ -31,6 +30,7 @@
 
 <script>
 
+import BookmarksStorage from '../mixins/BookmarksStorage';
 import FootStepUtils from '../mixins/FootStepUtils';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
@@ -38,13 +38,9 @@ import FavIcon from '../coms/FavIcon';
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, BookmarksStorage ],
   components: { FootmarkButton, FavIcon },
   props: {
-    // dailydataList: {
-    //   type: Array,
-    //   default: []
-    // },
   },
   data() {
     return {
@@ -55,51 +51,16 @@ export default {
     this.reload();
   },
   methods: {
-    reload: function() {
-      const me = this;
-      chrome.runtime.sendMessage({
-          message: "getDailydataList",
-          start: 0,
-          days: 2
-        },
-        function(dailydataList) {
-          me.dailydataList = dailydataList;
-        }
-      );
+    reload: async function() {
+
+      this.dailydataList = await this.getDailyListForDays(0, 2);
     },
-    stampFootmark: function(day, url) {
-console.log("1 day:" + day);
-      const me = this;
-
-
-      chrome.runtime.sendMessage({
-          message: "countUpStamp",
-          day: day,
-          url: url
-        },
-        //保存後イベント
-        function(dailyData) {
-console.log("2 day:" + day);
-
-          for (let i=0; i<me.dailydataList.length; i++) {
-console.log("3 day:" + me.dailydataList[i].day);
-            if (me.dailydataList[i].day == day) {
-              me.dailydataList[i] = dailyData;
-              return;
-            }
-          }
-        }
-      );
-
-      // for (let i=0; i<me.dailydataList.length; i++) {
-      //   if (me.dailydataList[i].day == day) {
-      //     //データ更新
-      //     me.$set(me.dailydataList, i, dailyData);
-      //     break;
-      //   }
-      // }
-      //
-
+    stamp: async function(item) {
+      console.dir(item);
+      //スタンプ
+      const newFootmark = await this.stampFootmark(item);
+      //リロード
+      this.dailydataList = await this.getDailyListForDays(0, 2);
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);
@@ -110,8 +71,8 @@ console.log("3 day:" + me.dailydataList[i].day);
     dateFormat : function(ymd) {
       const WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
       const y = parseInt(ymd.substring(0, 4));
-      const m = parseInt(ymd.substring(5, 7));
-      const d = parseInt(ymd.substring(8, 10));
+      const m = parseInt(ymd.substring(4, 6));
+      const d = parseInt(ymd.substring(6, 8));
 
       const date = new Date( y, m-1, d );
       const w = WeekChars[date.getDay()];

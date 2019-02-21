@@ -13,19 +13,22 @@
 <button @click="newBookmarks">ブックマーク作成</button>
 <button @click="clearBookmarks">ブックマーク　クリア</button>
 
+<br>
+<br>
+<button @click="testFunc">test</button>
 
 
   </div>
 </template>
 
 <script>
-
 import FootStepUtils from './mixins/FootStepUtils';
+import ApiPromised from './mixins/ApiPromised';
 
 
 export default {
   name: 'options',
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, ApiPromised ],
   data() {
     return {
       storageDataList : {}
@@ -128,7 +131,7 @@ export default {
 
 
     },
-    newBookmarks: function(e) {
+    newBookmarks: async function(e) {
 
       //Footstepディレクトリ取得
       const KeyFootstepFolderId = "KeyFootstepFolderId";
@@ -136,31 +139,31 @@ export default {
 
       const startTime = Date.now();
 
-      for (let y=2019; y<2020; y++) {
-        chrome.bookmarks.create(
+      for (let y=2017; y<=2018; y++) {
+        await chrome.bookmarks.create(
           {'parentId': footstepDirId, 'title': String(y)},
-          function(yearFolder) {
+          async function(yearFolder) {
             console.log('' + (Date.now() - startTime) + " 作成:" + y);
 
-            for (let m=7; m<9; m++) {
-              chrome.bookmarks.create(
+            for (let m=1; m<=12; m++) {
+              await chrome.bookmarks.create(
                 {'parentId': yearFolder.id, 'title': String(m)},
-                function(monthFolder) {
+                async function(monthFolder) {
                   console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m);
 
-                  for (let d=1; d<31; d++) {
-                    chrome.bookmarks.create(
+                  for (let d=1; d<=30; d++) {
+                    await chrome.bookmarks.create(
                       {'parentId': monthFolder.id, 'title': String(d)},
-                      function(dayFolder) {
+                      async function(dayFolder) {
                         console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d);
 
-                        for (let i=1; i<100; i++) {
-                          chrome.bookmarks.create(
+                        for (let i=1; i<=100; i++) {
+                          await chrome.bookmarks.create(
                             {'parentId': dayFolder.id,
                             'title': 'RGBと16進数カラーコードの相互変換ツール - PEKO STEP',
-                            'url': 'https://stackoverflow.com/questions/10257301/where-to-read-console-messages-from-background-js-in-a-chrome-extension'},
-                            function(obj) {
-                              console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d + " " + i);
+                            'url': 'https://stackoverflow.com/questions/10257301/where-to-read-console-messages-from-background-js-in-a-chrome-extension?arg=' + y + "." + m + "." + d + "." + i},
+                            async function(obj) {
+//                              console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d + " " + i);
                             }
                           );
                         }
@@ -172,18 +175,60 @@ export default {
             }
           }
         );
-
       }
-
-
     },
     clearBookmarks: function(e) {
       const KeyFootstepFolderId = "KeyFootstepFolderId";
       localStorage.removeItem(KeyFootstepFolderId);
 
+    },
+    testFunc: async function(e) {
+      const start = new Date().getTime();
+
+      const nodes0 = await this.apiBookmarksGetChildren("0");
+
+      for (let i=0; i<nodes0.length; i++) {
+        const nodes1 = await this.apiBookmarksGetChildren(nodes0[i].id);
+        for (let j=0; j<nodes1.length; j++) {
+          if(nodes1[j].title == "Footstep") {
+            console.log("found!");
+            console.dir(nodes1[j]);
+            break;
+          }
+        }
+      }
+      const end = new Date().getTime();
+      console.log("time:" + (end - start));
+
+      // const nodes = await this.apiBookmarksGetChildren();
+      //
+      // for (let i=0; i<nodes.length; i++) {
+      //   console.log("i:" + nodes[i].title);
+      // }
+
+      // const KeyFootstepFolderId = "KeyFootstepFolderId";
+      // const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
+      //
+      // let long_title = "";
+      // for (let i=0; i<500; i++) {
+      //   long_title += "１２３４５６７８９０";
+      // }
+      //
+      // console.log("1");
+      //
+      // console.log("arg len:" + long_title.length);
+      // const node = {'parentId': footstepDirId, 'title': long_title, 'url': "https://www.yahoo.co.jp/"};
+      // const ret = await this.apiBookmarksCreate(node);
+      // console.log("ret url:" + ret.url);
+      // console.log("ret len:" + ret.title.length);
+      // console.log("4");
     }
+
   }
 }
+
+
+
 
 </script>
 
