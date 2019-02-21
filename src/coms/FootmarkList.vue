@@ -19,8 +19,7 @@
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton @click="stamp(dailyData.ymd, item.url, item.title)" />
-            {{ item.stampCount }}
+            <FootmarkButton @click="stamp(item)" />
           </td>
         </tr>
       </template>
@@ -56,19 +55,23 @@ export default {
 
       this.dailydataList = await this.getDailyListForDays(0, 2);
     },
-    stamp: async function(day, url, title) {
-
-      const footmark = {
-        'title':title,
-        'url':url,
-        'stampCount':1
-      };
-
-      const newFootmark = await this.stampFootmark(footmark);
-
+    // stamp: async function(day, url, title) {
+    //   const footmark = {
+    //     'title':title,
+    //     'url':url,
+    //     'stampCount':1
+    //   };
+    //   //スタンプ
+    //   const newFootmark = await this.stampFootmark(footmark);
+    //   //リロード
+    //   this.dailydataList = await this.getDailyListForDays(0, 2);
+    // },
+    stamp: async function(item) {
+      console.dir(item);
+      //スタンプ
+      const newFootmark = await this.stampFootmark(item);
       //リロード
       this.dailydataList = await this.getDailyListForDays(0, 2);
-
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);

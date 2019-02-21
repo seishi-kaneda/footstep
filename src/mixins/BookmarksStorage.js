@@ -130,7 +130,6 @@ export default {
       return newNode;
     },
     getOrCreateYmdDir: async function(ymd, doCreate) {
-      console.log("getOrCreateYmdDir s ymd:" + ymd);
       const yy = ymd.substring(0, 4);
       const mm = ymd.substring(4, 6);
       const dd = ymd.substring(6, 8);

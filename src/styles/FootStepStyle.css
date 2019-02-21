@@ -67,7 +67,6 @@ p.link1 {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 100%;
-  background-color: #ffffff;
 }
 
 
@@ -79,7 +78,6 @@ p.link2 {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 120%;
-  background-color: #fff8f1;
 }
 
 
@@ -91,7 +89,6 @@ p.link3 {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 140%;
-  background-color: #fff8f1
 }
 
 
@@ -103,7 +100,6 @@ p.link4 {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 160%;
-  background-color: #fff8f1;
 }
 
 
@@ -115,8 +111,6 @@ p.link5 {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 200%;
-  background-color: #ffdcbc;
-
 }
 
 

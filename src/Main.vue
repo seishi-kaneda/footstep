@@ -18,12 +18,7 @@
         </td>
       </tr>
     </table>
-    <template v-if="isShowFootmarkList">
-      <FootmarkList ref="footmarkList" ></FootmarkList>
-    </template>
-    <template v-else>
-      <a @click="recentFootmark">最近のフットマークを表示</a>
-    </template>
+    <FootmarkList ref="footmarkList" ></FootmarkList>
   </div>
 </template>
 
@@ -43,7 +38,6 @@ export default {
   },
   data () {
     return {
-      isShowFootmarkList : true,
       tabTitle: "",
       tabUrl: "",
       tabFavIconUrl: undefined
@@ -56,15 +50,12 @@ export default {
     this.tabUrl = tab.url;
 },
   methods: {
-    recentFootmark: function() {
-      this.isShowFootmarkList = true;
-    },
     clickNewMark: async function () {
 
       const footmark = {
         'title':this.tabTitle,
         'url':this.tabUrl,
-        'favicon':this.tabFavIconUrl,
+        'faviconUrl':this.tabFavIconUrl,
         'stampCount':1
       };
 
