@@ -23,6 +23,11 @@
           </td>
         </tr>
       </template>
+      <tr>
+        <td colspan="4" >
+          <a @click="showMore">続きを表示</a>
+        </td>
+      </tr>
     </table>
 
   </div>
@@ -52,8 +57,8 @@ export default {
   },
   methods: {
     reload: async function() {
-
-      this.dailydataList = await this.getDailyListForDays(0, 2);
+      const todayYmd = this.getYmd(new Date());
+      this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
     },
     stamp: async function(item) {
       console.dir(item);
@@ -82,6 +87,14 @@ export default {
     linkStyle : function (count) {
       const styles = ["link1", "link2", "link3", "link4", "link5"];
       return styles[count-1];
+    },
+    showMore: function () {
+      //最後の日
+      const lastYmd = dailydataList[dailydataList.length - 1].ymd;
+      const nextYmd = String(parseInt(lastYmd) - 1); //日付として不正であっても良い
+
+//      this.dailydataList = await this.getDailyListForDays(0, 2);
+
     }
   }
 }
@@ -95,7 +108,6 @@ export default {
 @import '../styles/FootStepStyle.css';
 
 div.list_div {
-
   width: 700px;
   height: 400px;
   overflow-y: scroll;

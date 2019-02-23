@@ -48,10 +48,10 @@ export default {
 
       for (let i=0; i<allYmdList.length; i++) {
         const ymd = allYmdList[i];
-        if (startYmd <= ymd) {
+        if (startYmd >= ymd) {
           targetYmdList.push(ymd);
         }
-        if (targetYmdList.count >= dayCount) {
+        if (targetYmdList.length >= dayCount) {
           break;
         }
       }
@@ -77,6 +77,10 @@ export default {
           footmarks.push(this.footFromBook(bookmarks[i]));
         }
       }
+
+      footmarks.sort( function(a, b) {
+        return b.dateAdded - a.dateAdded;
+      });
       return footmarks;
     },
     /**
