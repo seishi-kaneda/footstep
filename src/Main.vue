@@ -62,7 +62,7 @@ export default {
       const newFootmark = await this.stampFootmark(footmark);
 
       //リロード
-      this.$refs.footmarkList.reload();
+      this.$refs.footmarkList.reloadToday();
     }
   }
 }

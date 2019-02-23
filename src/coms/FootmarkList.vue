@@ -52,20 +52,31 @@ export default {
       dailydataList : []
     }
   },
-  mounted () {
-    this.reload();
+  async mounted () {
+    const todayYmd = this.getYmd(new Date());
+    this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
   },
   methods: {
-    reload: async function() {
+    reloadToday: async function() {
       const todayYmd = this.getYmd(new Date());
-      this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
+      const todayData = await this.getDailyData(todayYmd);
+
+      for (let i=0; i<this.dailydataList.length; i++) {
+        if (this.dailydataList[i].ymd == todayYmd) {
+          if (todayData == undefined) {
+            this.dailydataList.splice(i, 1);
+          } else {
+            this.dailydataList.splice(i, 1, todayData);
+          }
+          break;
+        }
+      }
     },
     stamp: async function(item) {
-      console.dir(item);
       //スタンプ
       const newFootmark = await this.stampFootmark(item);
-      //リロード
-      this.dailydataList = await this.getDailyListForDays(0, 2);
+      //今日データリロード
+      await this.reloadToday();
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);

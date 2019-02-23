@@ -43,45 +43,47 @@ export default {
     },
     getDailyListForDays: async function(startYmd, dayCount) {
 
-      const targetYmdList = [];
       const allYmdList = await this.createYmdList();
-
+      const dailyList = [];
       for (let i=0; i<allYmdList.length; i++) {
         const ymd = allYmdList[i];
         if (startYmd >= ymd) {
-          targetYmdList.push(ymd);
+
+          const dailyData = await this.getDailyData(ymd);
+          if (dailyData != undefined) {
+            dailyList.push(dailyData);
+          }
         }
-        if (targetYmdList.length >= dayCount) {
+        if (dailyList.length >= dayCount) {
           break;
         }
       }
 
-      const dailyList = [];
-      for (let i=0; i<targetYmdList.length; i++) {
-        const ymd = targetYmdList[i];
-        const dailyData = {
-          'ymd': ymd,
-          'footmarkList': await this.getFootmarkListOnDay(ymd)
-        }
-        dailyList.push(dailyData);
-      }
       return dailyList;
     },
-    getFootmarkListOnDay: async function(ymd) {
+    getDailyData: async function(ymd) {
 
       const footmarks = [];
       const dir = await this.getOrCreateYmdDir(ymd, false);
       if (dir != undefined) {
         const bookmarks = await this.apiBookmarksGetChildren(dir.id);
+        if (bookmarks.length == 0) {
+          return undefined;
+        }
         for (let i=0; i<bookmarks.length; i++) {
           footmarks.push(this.footFromBook(bookmarks[i]));
         }
       }
-
       footmarks.sort( function(a, b) {
         return b.dateAdded - a.dateAdded;
       });
-      return footmarks;
+
+      const dailyData = {
+        'ymd': ymd,
+        'footmarkList': footmarks
+      }
+console.dir(dailyData);
+      return dailyData;
     },
     /**
     * ブックマーク(またディレクトリ）を作成or取得。
