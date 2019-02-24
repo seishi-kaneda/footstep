@@ -81,8 +81,7 @@ export default {
       const dailyData = {
         'ymd': ymd,
         'footmarkList': footmarks
-      }
-console.dir(dailyData);
+      };
       return dailyData;
     },
     /**

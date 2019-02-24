@@ -19,13 +19,13 @@
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton @click="stamp(item)" />
+            <FootmarkButton :enable="isStampEnable(item)" @click="stamp(item)" />
           </td>
         </tr>
       </template>
       <tr>
         <td colspan="4" >
-          <a @click="showMore">続きを表示</a>
+          <a class="method" @click="showMore">続きを表示</a>
         </td>
       </tr>
     </table>
@@ -49,12 +49,14 @@ export default {
   },
   data() {
     return {
-      dailydataList : []
+      dailydataList : [],
+      todayUrlMap: []
     }
   },
   async mounted () {
     const todayYmd = this.getYmd(new Date());
     this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
+    this.makeTodayUrlMap();
   },
   methods: {
     reloadToday: async function() {
@@ -69,6 +71,24 @@ export default {
             this.dailydataList.splice(i, 1, todayData);
           }
           break;
+        }
+      }
+
+      this.makeTodayUrlMap();
+    },
+    makeTodayUrlMap: async function() {
+      let todayData = undefined;
+      const todayYmd = this.getYmd(new Date());
+      for (let i=0; i<this.dailydataList.length; i++) {
+        if (this.dailydataList[i].ymd == todayYmd) {
+          todayData = this.dailydataList[i];
+        }
+      }
+
+      this.todayUrlMap.splice(0, this.todayUrlMap.length);
+      if (todayData != undefined) {
+        for (let footmark of todayData.footmarkList) {
+          this.todayUrlMap[footmark.url] = footmark;
         }
       }
     },
@@ -99,13 +119,25 @@ export default {
       const styles = ["link1", "link2", "link3", "link4", "link5"];
       return styles[count-1];
     },
-    showMore: function () {
+    showMore: async function () {
       //最後の日
-      const lastYmd = dailydataList[dailydataList.length - 1].ymd;
+      const lastYmd = this.dailydataList[this.dailydataList.length - 1].ymd;
       const nextYmd = String(parseInt(lastYmd) - 1); //日付として不正であっても良い
 
-//      this.dailydataList = await this.getDailyListForDays(0, 2);
+      const addList = await this.getDailyListForDays(nextYmd, 3);
 
+      for (let dailyData of addList) {
+        this.dailydataList.push(dailyData);
+      }
+    },
+    isStampEnable: function(footmark) {
+      const todayYmd = this.getYmd(new Date());
+      if (footmark.ymd == todayYmd) {
+        return true;
+      } else {
+        const ret = this.todayUrlMap[footmark.url] == undefined;
+        return ret;
+      }
     }
   }
 }
