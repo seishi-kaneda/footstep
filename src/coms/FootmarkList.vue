@@ -25,7 +25,7 @@
       </template>
       <tr>
         <td colspan="4" >
-          <a class="method" @click="showMore">続きを表示</a>
+          <a class="method" @click="showMore" v-show="showMoreVisible">続きを表示</a>
         </td>
       </tr>
     </table>
@@ -50,7 +50,8 @@ export default {
   data() {
     return {
       dailydataList : [],
-      todayUrlMap: []
+      todayUrlMap: [],
+      showMoreVisible: true
     }
   },
   async mounted () {
@@ -62,15 +63,26 @@ export default {
     reloadToday: async function() {
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
-
+      let found = false;
+console.log(todayData);
       for (let i=0; i<this.dailydataList.length; i++) {
         if (this.dailydataList[i].ymd == todayYmd) {
+          found = true;
           if (todayData == undefined) {
+            //今日データが無くなった場合
             this.dailydataList.splice(i, 1);
           } else {
+            //今日データが更新された場合
             this.dailydataList.splice(i, 1, todayData);
           }
           break;
+        }
+      }
+
+      //今日データが作成された
+      if (!found) {
+        if (todayData != undefined) {
+          this.dailydataList.unshift(todayData);
         }
       }
 
@@ -125,6 +137,10 @@ export default {
       const nextYmd = String(parseInt(lastYmd) - 1); //日付として不正であっても良い
 
       const addList = await this.getDailyListForDays(nextYmd, 3);
+
+      if (addList.length == 0) {
+        this.showMoreVisible = false;
+      }
 
       for (let dailyData of addList) {
         this.dailydataList.push(dailyData);

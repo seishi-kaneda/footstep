@@ -5,7 +5,7 @@ const ExportFileHeader = "FootStep LocalStrage Data.";
 
 const KeyFootstepFolderId = "KeyFootstepFolderId";
 
-const MaxStampCount = 5;
+const MaxStampCount = 4;
 
 const TitleSplitChar = '^';
 
