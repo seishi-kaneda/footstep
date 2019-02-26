@@ -19,7 +19,8 @@
             </p>
           </td>
           <td class="footmark_stamp">
-            <FootmarkButton :enable="isStampEnable(item)" @click="stamp(item)" />
+            <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
+            {{item.canStamp}}
           </td>
         </tr>
       </template>
@@ -40,6 +41,7 @@ import FootStepUtils from '../mixins/FootStepUtils';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
+const MaxStampCount = 4;
 
 export default {
   name: 'FootmarkList',
@@ -50,21 +52,19 @@ export default {
   data() {
     return {
       dailydataList : [],
-      todayUrlMap: [],
       showMoreVisible: true
     }
   },
   async mounted () {
     const todayYmd = this.getYmd(new Date());
     this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
-    this.makeTodayUrlMap();
+    this.updateCanStamp(this.dailydataList);
   },
   methods: {
     reloadToday: async function() {
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
       let found = false;
-console.log(todayData);
       for (let i=0; i<this.dailydataList.length; i++) {
         if (this.dailydataList[i].ymd == todayYmd) {
           found = true;
@@ -86,21 +86,46 @@ console.log(todayData);
         }
       }
 
-      this.makeTodayUrlMap();
+      this.updateCanStamp(this.dailydataList);
     },
-    makeTodayUrlMap: async function() {
+    //スタンプボタンの可・不可を切り替え
+    updateCanStamp: async function(dailyList) {
       let todayData = undefined;
       const todayYmd = this.getYmd(new Date());
-      for (let i=0; i<this.dailydataList.length; i++) {
-        if (this.dailydataList[i].ymd == todayYmd) {
-          todayData = this.dailydataList[i];
+      for (let i=0; i<dailyList.length; i++) {
+        if (dailyList[i].ymd == todayYmd) {
+          todayData = dailyList[i];
         }
       }
 
-      this.todayUrlMap.splice(0, this.todayUrlMap.length);
+      const todayUrlMap = [];
       if (todayData != undefined) {
         for (let footmark of todayData.footmarkList) {
-          this.todayUrlMap[footmark.url] = footmark;
+//          this.todayUrlMap.splice(footmark.url, 1, footmark);
+//          this.$set(this.todayUrlMap, footmark.url, footmark);
+          todayUrlMap[footmark.url] = footmark;
+        }
+      }
+
+      for (let daily of dailyList) {
+        for (let footmark of daily.footmarkList) {
+          if (footmark.stampCount >= MaxStampCount) {
+            //最大スタンプカウント
+            footmark.canStamp = false;
+          } else {
+            if (daily.ymd == todayYmd) {
+              //今日
+              footmark.canStamp = true;
+            } else {
+              if (todayUrlMap[footmark.url] == undefined) {
+                //今日に未登録
+                footmark.canStamp = true;
+              } else {
+                //今日に登録済み
+                footmark.canStamp = false;
+              }
+            }
+          }
         }
       }
     },
@@ -109,6 +134,7 @@ console.log(todayData);
       const newFootmark = await this.stampFootmark(item);
       //今日データリロード
       await this.reloadToday();
+
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);
@@ -140,19 +166,12 @@ console.log(todayData);
 
       if (addList.length == 0) {
         this.showMoreVisible = false;
-      }
-
-      for (let dailyData of addList) {
-        this.dailydataList.push(dailyData);
-      }
-    },
-    isStampEnable: function(footmark) {
-      const todayYmd = this.getYmd(new Date());
-      if (footmark.ymd == todayYmd) {
-        return true;
       } else {
-        const ret = this.todayUrlMap[footmark.url] == undefined;
-        return ret;
+        for (let dailyData of addList) {
+          this.dailydataList.push(dailyData);
+        }
+
+        this.updateCanStamp(this.dailydataList);
       }
     }
   }

@@ -1,8 +1,12 @@
 <template>
-  <div>
+  <div v-if="this.enable">
     <img class="footmark_button"
         @click="btFootmark"
-        :src="stampImage">
+        src="../assets/footstep_24_red.png">
+  </div>
+  <div v-else>
+    <img
+        src="../assets/footstep_24_gray.png">
   </div>
 </template>
 
@@ -10,8 +14,8 @@
 
 import FootStepUtils from '../mixins/FootStepUtils';
 
-import enableImage from '../assets/footstep_24_red.png'
-import disableImage from '../assets/footstep_24_gray.png'
+// import enableImage from '../assets/footstep_24_red.png'
+// import disableImage from '../assets/footstep_24_gray.png'
 
 export default {
   name: 'FootmarkButton',
@@ -24,28 +28,15 @@ export default {
   mixins: [ FootStepUtils ],
   data() {
     return {
-      stampImage: undefined
     }
   },
   mounted () {
-    this.stampImage = this.enable ? enableImage : disableImage;
   },
   methods: {
     btFootmark: function () {
       if (this.enable) {
         this.$emit('click');
       }
-    },
-    imageUrl: function () {
-//      return enableImage;
-      return require('../assets/footstep_24_red.png');
-      // return this.enable ? '../assets/footstep_24_red.png'
-      //     : '../assets/footstep_24_gray.png';
-    }
-  },
-  watch: {
-    enable: function(newVal) {
-      return newVal ? enableImage : disableImage;
     }
   }
 }

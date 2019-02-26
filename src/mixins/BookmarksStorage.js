@@ -4,7 +4,7 @@ import ApiPromised from './ApiPromised';
 const FootstepFolderName = "Footstep System Folder [Don't touch]";
 
 
-const MaxStampCount = 5;
+const MaxStampCount = 4;
 
 const TitleSplitChar = '^';
 
@@ -236,7 +236,9 @@ export default {
         'bookmarkId': bookmark.id,
         'url': bookmark.url,
         'dateAdded': bookmark.dateAdded,
-        'ymd': this.getYmd(new Date(bookmark.dateAdded))
+        'ymd': this.getYmd(new Date(bookmark.dateAdded)),
+        'canStamp': true
+
       };
 
       //ブックマークはユーザーにより修正できる。
