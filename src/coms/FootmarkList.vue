@@ -15,15 +15,11 @@
           </td>
           <td class="footmark_title">
             <p v-bind:class="linkStyle(item.stampCount)">
-<!--
-              <a v-bind:href="item.url" target="_blank">{{ item.title }}</a>
--->
-<a @click="linkFootmark(item)">{{ item.title }}</a>
+              <a @click="linkFootmark(item)">{{ item.title }}</a>
             </p>
           </td>
           <td class="footmark_stamp">
             <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
-            {{item.canStamp}}
           </td>
         </tr>
       </template>
@@ -112,23 +108,26 @@ export default {
 
       for (let daily of dailyList) {
         for (let footmark of daily.footmarkList) {
-          if (footmark.stampCount >= MaxStampCount) {
-            //最大スタンプカウント
-            footmark.canStamp = false;
+
+          if (daily.ymd == todayYmd) {
+            //今日
+            if (footmark.stampCount >= MaxStampCount) {
+              //最大スタンプカウント
+              footmark.canStamp = false;
+            } else {
+              footmark.canStamp = true;
+            }
           } else {
-            if (daily.ymd == todayYmd) {
-              //今日
+            //過去
+            if (todayUrlMap[footmark.url] == undefined) {
+              //今日に未登録
               footmark.canStamp = true;
             } else {
-              if (todayUrlMap[footmark.url] == undefined) {
-                //今日に未登録
-                footmark.canStamp = true;
-              } else {
-                //今日に登録済み
-                footmark.canStamp = false;
-              }
+              //今日に登録済み
+              footmark.canStamp = false;
             }
           }
+
         }
       }
     },
