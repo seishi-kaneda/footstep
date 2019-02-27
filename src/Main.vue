@@ -1,19 +1,24 @@
 <template>
   <div id="main">
-    <table>
+    <div id="header">
+      <a class="method" href="options.html">設定</a>
+    </div>
+
+    <table class="footmark_table">
       <tr>
-        <td></td>
-        <td><FavIcon v-bind:iconUrl='tabFavIconUrl' /></td>
-        <td><input class="inputStyle" v-model="tabTitle"></td>
-        <td><FootmarkButton @click="clickNewMark" /></td>
+        <td class="footmark_time"></td>
+        <td class="footmark_favicon">
+          <FavIcon v-bind:iconUrl='tabFavIconUrl' />
+        </td>
+        <td class="footmark_title">
+          <input class="input_title" v-model="tabTitle">
+        </td>
+        <td class="footmark_stamp">
+          <FootmarkButton @click="clickNewMark" />
+        </td>
       </tr>
     </table>
-    <template v-if="isShowFootmarkList">
-      <FootmarkList ref="footmarkList" ></FootmarkList>
-    </template>
-    <template v-else>
-      <a @click="recentFootmark">最近のフットマークを表示</a>
-    </template>
+    <FootmarkList ref="footmarkList" ></FootmarkList>
   </div>
 </template>
 
@@ -21,64 +26,44 @@
 import FootmarkList from './coms/FootmarkList';
 import FootmarkButton from './coms/FootmarkButton';
 import FootStepUtils from './mixins/FootStepUtils';
+import BookmarksStorage from './mixins/BookmarksStorage';
 import FavIcon from './coms/FavIcon';
 
 
 export default {
   name: 'main',
   components: { FootmarkList, FootmarkButton, FavIcon },
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, BookmarksStorage ],
   props: {
   },
   data () {
     return {
-      isShowFootmarkList : false,
       tabTitle: "",
       tabUrl: "",
       tabFavIconUrl: undefined
     }
   },
-  mounted () {
-    const me = this;
-    this.getCurrentTab(function(tab){
-       me.tabTitle = tab.title;
-       me.tabFavIconUrl = tab.favIconUrl
-       me.tabUrl = tab.url;
-    });
-  },
+  async mounted () {
+    const tab = await this.getCurrentTab();
+    this.tabTitle = tab.title;
+    this.tabFavIconUrl = tab.favIconUrl;
+    this.tabUrl = tab.url;
+},
   methods: {
-    recentFootmark: function() {
-      this.isShowFootmarkList = true;
-    },
-    clickNewMark: function () {
-      const me = this;
+    clickNewMark: async function () {
 
-      const ymd = this.getNowYMD();
-      const markData = {
-        count:1,
-        times:[new Date().getTime()],
-        title:this.tabTitle,
-        url:this.tabUrl,
-        favicon:this.tabFavIconUrl
-      }
+      const footmark = {
+        'title':this.tabTitle,
+        'url':this.tabUrl,
+        'faviconUrl':this.tabFavIconUrl,
+        'stampCount':1
+      };
+      //作成
+      const newFootmark = await this.stampFootmark(footmark);
 
-      chrome.runtime.sendMessage({
-          message: "saveNewMark",
-          day: ymd,
-          markData: markData
-        },
-        //保存後イベント
-        function(dailyData) {
-
-          if (me.isShowFootmarkList) {
-            me.$refs.footmarkList.reload();
-//            me.$refs.footmarkList.updateDailyData(dailyData);
-          } else {
-            me.isShowFootmarkList = true;
-          }
-        }
-      );
-    },
+      //リロード
+      this.$refs.footmarkList.reloadToday();
+    }
   }
 }
 
@@ -89,14 +74,19 @@ export default {
 @import './styles/FootStepStyle.css';
 
 
- #main {
+#main {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 
+#header {
+  text-align: right;
+  margin-bottom: 40px;
+  color: #2c3e50;
+}
 
 </style>

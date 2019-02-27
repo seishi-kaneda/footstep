@@ -1,20 +1,33 @@
 <template>
 
-  <div>
-    <table>
+  <div class="list_div">
+    <table class="footmark_table">
       <template v-for="dailyData in dailydataList">
         <tr>
-          <td colspan="3" >
-            <b>{{ dateFormat(dailyData.day) }}</b>
+          <td colspan="4" >
+            <b>{{ dateFormat(dailyData.ymd) }}</b>
           </td>
         </tr>
-        <tr v-for="item in dailyData.markList">
-          <td align="left">{{ timeFormat(item.times[0]) }}</td>
-          <td><FavIcon v-bind:iconUrl='item.favicon' /></td>
-          <td align="left"><p class="overflow"><a v-bind:href="item.url" target="_blank">{{ item.title }}</a></p></td>
-          <td><FootmarkButton /></td>
+        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarkList">
+          <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
+          <td class="footmark_favicon">
+            <FavIcon v-bind:iconUrl='item.faviconUrl' />
+          </td>
+          <td class="footmark_title">
+            <p v-bind:class="linkStyle(item.stampCount)">
+              <a @click="linkFootmark(item)">{{ item.title }}</a>
+            </p>
+          </td>
+          <td class="footmark_stamp">
+            <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
+          </td>
         </tr>
       </template>
+      <tr>
+        <td colspan="4" >
+          <a class="method" @click="showMore" v-show="showMoreVisible">続きを表示</a>
+        </td>
+      </tr>
     </table>
 
   </div>
@@ -22,79 +35,108 @@
 
 <script>
 
+import BookmarksStorage from '../mixins/BookmarksStorage';
 import FootStepUtils from '../mixins/FootStepUtils';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
+const MaxStampCount = 4;
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, BookmarksStorage ],
   components: { FootmarkButton, FavIcon },
   props: {
-    // dailydataList: {
-    //   type: Array,
-    //   default: []
-    // },
   },
   data() {
     return {
-      dailydataList : []
+      dailydataList : [],
+      showMoreVisible: true
     }
   },
-  mounted () {
-    this.reload();
+  async mounted () {
+    const todayYmd = this.getYmd(new Date());
+    this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
+    this.updateCanStamp(this.dailydataList);
   },
   methods: {
-    reload: function() {
-      const me = this;
-      chrome.runtime.sendMessage({
-          message: "getDailydataList",
-          start: 0,
-          days: 3
-        },
-        function(dailydataList) {
-          me.dailydataList = dailydataList;
+    reloadToday: async function() {
+      const todayYmd = this.getYmd(new Date());
+      const todayData = await this.getDailyData(todayYmd);
+      let found = false;
+      for (let i=0; i<this.dailydataList.length; i++) {
+        if (this.dailydataList[i].ymd == todayYmd) {
+          found = true;
+          if (todayData == undefined) {
+            //今日データが無くなった場合
+            this.dailydataList.splice(i, 1);
+          } else {
+            //今日データが更新された場合
+            this.dailydataList.splice(i, 1, todayData);
+          }
+          break;
         }
-      );
-    },
-    // updateDailyData: function(dailyData) {
-    //   for (let i=0; i<me.dailydataList.length; i++) {
-    //     if (me.dailydataList[i].day == ymd) {
-    //       //データ更新
-    //       me.$set(me.dailydataList, i, dailyData);
-    //       break;
-    //     }
-    //   }
-    // },
-    clickNewMark: function () {
-      const me = this;
-
-      const ymd = this.getNowYMD();
-      const markData = {
-        count:1,
-        times:[new Date().getTime()],
-        title:this.tabTitle,
-        url:this.tabUrl,
-        favicon:this.tabFavIconUrl
       }
 
-      chrome.runtime.sendMessage({
-          message: "saveNewMark",
-          day: ymd,
-          markData: markData
-        },
-        function(dailyData) {
+      //今日データが作成された
+      if (!found) {
+        if (todayData != undefined) {
+          this.dailydataList.unshift(todayData);
+        }
+      }
 
-          for (let i=0; i<me.dailydataList.length; i++) {
-            if (me.dailydataList[i].day == ymd) {
-              //データ更新
-              me.$set(me.dailydataList, i, dailyData);
-              break;
+      this.updateCanStamp(this.dailydataList);
+    },
+    //スタンプボタンの可・不可を切り替え
+    updateCanStamp: async function(dailyList) {
+      let todayData = undefined;
+      const todayYmd = this.getYmd(new Date());
+      for (let i=0; i<dailyList.length; i++) {
+        if (dailyList[i].ymd == todayYmd) {
+          todayData = dailyList[i];
+        }
+      }
+
+      const todayUrlMap = [];
+      if (todayData != undefined) {
+        for (let footmark of todayData.footmarkList) {
+//          this.todayUrlMap.splice(footmark.url, 1, footmark);
+//          this.$set(this.todayUrlMap, footmark.url, footmark);
+          todayUrlMap[footmark.url] = footmark;
+        }
+      }
+
+      for (let daily of dailyList) {
+        for (let footmark of daily.footmarkList) {
+
+          if (daily.ymd == todayYmd) {
+            //今日
+            if (footmark.stampCount >= MaxStampCount) {
+              //最大スタンプカウント
+              footmark.canStamp = false;
+            } else {
+              footmark.canStamp = true;
+            }
+          } else {
+            //過去
+            if (todayUrlMap[footmark.url] == undefined) {
+              //今日に未登録
+              footmark.canStamp = true;
+            } else {
+              //今日に登録済み
+              footmark.canStamp = false;
             }
           }
+
         }
-      );
+      }
+    },
+    stamp: async function(item) {
+      //スタンプ
+      const newFootmark = await this.stampFootmark(item);
+      //今日データリロード
+      await this.reloadToday();
+
     },
     timeFormat : function(unixtime){
       const d = new Date(unixtime);
@@ -105,13 +147,37 @@ export default {
     dateFormat : function(ymd) {
       const WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
       const y = parseInt(ymd.substring(0, 4));
-      const m = parseInt(ymd.substring(5, 7));
-      const d = parseInt(ymd.substring(8, 10));
+      const m = parseInt(ymd.substring(4, 6));
+      const d = parseInt(ymd.substring(6, 8));
 
       const date = new Date( y, m-1, d );
       const w = WeekChars[date.getDay()];
 
       return y + "年" + m + "月" + d + "日" + "（" + w + "）";
+    },
+    linkStyle : function (count) {
+      const styles = ["link1", "link2", "link3", "link4", "link5"];
+      return styles[count-1];
+    },
+    showMore: async function () {
+      //最後の日
+      const lastYmd = this.dailydataList[this.dailydataList.length - 1].ymd;
+      const nextYmd = String(parseInt(lastYmd) - 1); //日付として不正であっても良い
+
+      const addList = await this.getDailyListForDays(nextYmd, 3);
+
+      if (addList.length == 0) {
+        this.showMoreVisible = false;
+      } else {
+        for (let dailyData of addList) {
+          this.dailydataList.push(dailyData);
+        }
+
+        this.updateCanStamp(this.dailydataList);
+      }
+    },
+    linkFootmark: async function (item) {
+      await this.apiTabsCreate({'url':item.url, 'active':false});
     }
   }
 }
@@ -123,6 +189,12 @@ export default {
 
 <style>
 @import '../styles/FootStepStyle.css';
+
+div.list_div {
+  width: 700px;
+  height: 400px;
+  overflow-y: scroll;
+}
 
 
 </style>

@@ -1,29 +1,119 @@
 
 
 body {
-  min-width: 600px;
+  min-width: 700px;
 }
+
+/** リンク系 */
 a {
   cursor:pointer;
   text-decoration: underline;
+  color: #0000FF;
+}
+
+/** 処理系 */
+a.method {
   color: #42b983;
 }
 
 
-input.inputStyle {
-  width: 400px;
+input.input_title {
+  width: 500px;
 }
 
-td {
+tr.footmark_row {
+  padding:0px;
+  margin:0px;
+  height:50px;
+}
+
+td.footmark_time {
+  padding:0px;
+  margin:0px;
+  width: 70px;
   table-layout: fixed;
 }
 
-p.overflow {
-  width: 400px;
+td.footmark_favicon {
+  padding:0px;
+  margin:0px;
+  width: 40px;
+  table-layout: fixed;
+}
+
+td.footmark_title {
+  padding:0px;
+  margin:0px;
+  width: 510px;
+  table-layout: fixed;
+  text-align: left;
+
+}
+
+td.footmark_stamp {
+  padding:0px;
+  margin:0px;
+  width: 40px;
+  table-layout: fixed;
+}
+
+
+
+
+p.link1 {
+  padding:0px;
+  margin:0px;
+  width: 500px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 100%;
 }
+
+
+p.link2 {
+  padding:0px;
+  margin:0px;
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 120%;
+}
+
+
+p.link3 {
+  padding:0px;
+  margin:0px;
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 140%;
+}
+
+
+p.link4 {
+  padding:0px;
+  margin:0px;
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 160%;
+}
+
+/**
+p.link5 {
+  padding:0px;
+  margin:0px;
+  width: 500px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 200%;
+}
+*/
 
 ul {
   list-style-type: none;
