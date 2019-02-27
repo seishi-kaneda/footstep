@@ -15,7 +15,10 @@
           </td>
           <td class="footmark_title">
             <p v-bind:class="linkStyle(item.stampCount)">
+<!--
               <a v-bind:href="item.url" target="_blank">{{ item.title }}</a>
+-->
+<a @click="linkFootmark(item)">{{ item.title }}</a>
             </p>
           </td>
           <td class="footmark_stamp">
@@ -173,6 +176,9 @@ export default {
 
         this.updateCanStamp(this.dailydataList);
       }
+    },
+    linkFootmark: async function (item) {
+      await this.apiTabsCreate({'url':item.url, 'active':false});
     }
   }
 }

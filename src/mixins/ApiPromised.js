@@ -39,6 +39,12 @@ export default {
       return new Promise( (resolve) => {
         chrome.tabs.query(queryInfo, (tabs) => resolve(tabs) );
       });
+    },
+    apiTabsCreate: function(createProperties) {
+      return new Promise( (resolve) => {
+        chrome.tabs.create(createProperties
+            , (createProperties) => resolve(createProperties));
+      });
     }
   }
 }
