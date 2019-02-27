@@ -1,8 +1,8 @@
 <template>
   <div id="main">
-    <a href="options.html">オプション</a>
-    <br>
-    <br>
+    <div id="header">
+      <a class="method" href="options.html">設定</a>
+    </div>
 
     <table class="footmark_table">
       <tr>
@@ -62,7 +62,7 @@ export default {
       const newFootmark = await this.stampFootmark(footmark);
 
       //リロード
-      this.$refs.footmarkList.reload();
+      this.$refs.footmarkList.reloadToday();
     }
   }
 }
@@ -74,14 +74,19 @@ export default {
 @import './styles/FootStepStyle.css';
 
 
- #main {
+#main {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 
+#header {
+  text-align: right;
+  margin-bottom: 40px;
+  color: #2c3e50;
+}
 
 </style>

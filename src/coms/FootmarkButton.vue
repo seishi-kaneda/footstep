@@ -1,6 +1,12 @@
 <template>
-  <div>
-    <img class="footmark_button" @click="btFootmark" src="../assets/footstep_24_red.png">
+  <div v-if="this.enable">
+    <img class="footmark_button"
+        @click="btFootmark"
+        src="../assets/footstep_24_red.png">
+  </div>
+  <div v-else>
+    <img
+        src="../assets/footstep_24_gray.png">
   </div>
 </template>
 
@@ -8,17 +14,29 @@
 
 import FootStepUtils from '../mixins/FootStepUtils';
 
+// import enableImage from '../assets/footstep_24_red.png'
+// import disableImage from '../assets/footstep_24_gray.png'
 
 export default {
   name: 'FootmarkButton',
+  props: {
+    enable: {
+      type: Boolean,
+      default: true
+    }
+  },
   mixins: [ FootStepUtils ],
   data() {
     return {
     }
   },
+  mounted () {
+  },
   methods: {
     btFootmark: function () {
-      this.$emit('click')
+      if (this.enable) {
+        this.$emit('click');
+      }
     }
   }
 }

@@ -1,4 +1,5 @@
 <template>
+<!--
   <div id="options">
     <button @click="clearAll">保存データクリア</button>
     <button @click="openNewTab">タブで開く</button>
@@ -19,6 +20,7 @@
 
 
   </div>
+-->
 </template>
 
 <script>

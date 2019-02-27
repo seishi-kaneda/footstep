@@ -4,17 +4,18 @@ body {
   min-width: 700px;
 }
 
+/** リンク系 */
 a {
   cursor:pointer;
   text-decoration: underline;
   color: #0000FF;
 }
 
-/*
-table, td, th{
-  border: double 1px #9999FF;
+/** 処理系 */
+a.method {
+  color: #42b983;
 }
-*/
+
 
 input.input_title {
   width: 500px;
@@ -102,7 +103,7 @@ p.link4 {
   font-size: 160%;
 }
 
-
+/**
 p.link5 {
   padding:0px;
   margin:0px;
@@ -112,7 +113,7 @@ p.link5 {
   text-overflow: ellipsis;
   font-size: 200%;
 }
-
+*/
 
 ul {
   list-style-type: none;
