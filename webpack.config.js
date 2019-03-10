@@ -1,8 +1,12 @@
+const { VueLoaderPlugin } = require("vue-loader");
+
 var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
   watch: true,
+  mode: 'production',
+  plugins: [new VueLoaderPlugin()],
   entry: {
     main: './src/main.js',
     options: './src/options.js'
@@ -71,12 +75,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
       }
     }),
     new webpack.LoaderOptionsPlugin({
