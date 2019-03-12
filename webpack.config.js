@@ -10,7 +10,7 @@ module.exports = {
   entry: {
     main: './src/main.js',
     options: './src/options.js',
-    background: './src/background.ts'
+    background: './src/bg/background.ts'
   },
   output: {
     path: path.resolve(__dirname, './extension/dist'),
