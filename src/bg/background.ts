@@ -2,30 +2,20 @@ import ChromeApiPromised from './ChromeApiPromised';
 
 type QueryInfo = chrome.tabs.QueryInfo;
 type Tab = chrome.tabs.Tab;
+type TabActiveInfo = chrome.tabs.TabActiveInfo;
 
-//console.dir(FootStepUtils);
-
-new ChromeApiPromised().test()
-
-const hoge: string = 'aaa'
-console.log(hoge)
 
 
 // タブが切り替わった時のイベント
-chrome.tabs.onActivated.addListener(function (tabId) {
-    chrome.tabs.query({"active": true}, async function (tab) {
-        console.log("onActivated " + tab[0].url); // 切り替わったタブのURL
+chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
+  console.dir(tab);
 
-        const queryInfo:QueryInfo = {
-          active: true,
-          currentWindow: true
-        };
-        const tabs:Tab[] = await new ChromeApiPromised().apiTabsQuery(queryInfo);
-        console.log("apiTabsQuery " + tabs[0].url); // 切り替わったタブのURL
-
-
-//        chrome.tabs.remove(tab[0].id); //切り替わったタブを削除
-    });
+  // const queryInfo:QueryInfo = {
+  //   active: true,
+  //   currentWindow: true
+  // };
+  // const tabs:Tab[] = await new ChromeApiPromised().apiTabsQuery(queryInfo);
+  // console.log("apiTabsQuery " + tabs[0].url); // 切り替わったタブのURL
 });
 
 // タブが更新された時のイベント
