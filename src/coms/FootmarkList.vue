@@ -35,7 +35,7 @@
 
 <script>
 
-import BookmarksStorage from '../mixins/BookmarksStorage';
+//import BookmarksStorage from '../mixins/BookmarksStorage';
 import FootStepUtils from '../mixins/FootStepUtils';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
@@ -44,7 +44,9 @@ const MaxStampCount = 4;
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils, BookmarksStorage ],
+  mixins: [ FootStepUtils
+//    , BookmarksStorage 
+  ],
   components: { FootmarkButton, FavIcon },
   props: {
   },

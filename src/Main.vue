@@ -26,14 +26,16 @@
 import FootmarkList from './coms/FootmarkList';
 import FootmarkButton from './coms/FootmarkButton';
 import FootStepUtils from './mixins/FootStepUtils';
-import BookmarksStorage from './mixins/BookmarksStorage';
+//import BookmarksStorage from './mixins/BookmarksStorage';
 import FavIcon from './coms/FavIcon';
 
 
 export default {
   name: 'main',
   components: { FootmarkList, FootmarkButton, FavIcon },
-  mixins: [ FootStepUtils, BookmarksStorage ],
+  mixins: [ FootStepUtils
+//    , BookmarksStorage
+   ],
   props: {
   },
   data () {
@@ -44,6 +46,12 @@ export default {
     }
   },
   async mounted () {
+    console.log("mounted 0");
+    const res = await this.apiRuntimeSendMessage("apiRuntimeSendMessage");
+    console.log("mounted 1");
+    console.log("res:" + res);
+    console.log("mounted 2");
+
     const tab = await this.getCurrentTab();
     this.tabTitle = tab.title;
     this.tabFavIconUrl = tab.favIconUrl;

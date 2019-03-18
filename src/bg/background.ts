@@ -1,9 +1,27 @@
 import ChromeApiPromised from './ChromeApiPromised';
+import StorageAccess from './StorageAccess';
+
 
 type QueryInfo = chrome.tabs.QueryInfo;
 type Tab = chrome.tabs.Tab;
 type TabActiveInfo = chrome.tabs.TabActiveInfo;
+type MessageSender = chrome.runtime.MessageSender;
 
+
+const storageAccess: StorageAccess = new StorageAccess();
+storageAccess.init();
+
+
+chrome.runtime.onMessage.addListener(
+  function(message: any, sender: MessageSender, sendResponse: any) {
+
+    (async () => {
+       console.log("message:" + message)
+       sendResponse("sendResponse");
+     })();
+     return true; // keep the messaging channel open for sendResponse
+  }
+);
 
 
 // タブが切り替わった時のイベント
