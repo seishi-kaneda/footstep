@@ -1,5 +1,4 @@
 import {Utils} from './Utils';
-
 import {Footmark} from './Types';
 import {Dailydata} from './Types';
 

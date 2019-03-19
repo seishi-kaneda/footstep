@@ -35,18 +35,15 @@
 
 <script>
 
-//import BookmarksStorage from '../mixins/BookmarksStorage';
 import FootStepUtils from '../mixins/FootStepUtils';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
-const MaxStampCount = 4;
+const MaxStampCount = 1;
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils
-//    , BookmarksStorage 
-  ],
+  mixins: [ FootStepUtils ],
   components: { FootmarkButton, FavIcon },
   props: {
   },
@@ -58,7 +55,14 @@ export default {
   },
   async mounted () {
     const todayYmd = this.getYmd(new Date());
-    this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
+    this.dailydataList = await apiRuntimeSendMessage({
+      'eventType': 'getDailyListForDays',
+      'params': {
+        'start': todayYmd,
+        'days': 2
+      },
+    });
+
     this.updateCanStamp(this.dailydataList);
   },
   methods: {

@@ -26,16 +26,13 @@
 import FootmarkList from './coms/FootmarkList';
 import FootmarkButton from './coms/FootmarkButton';
 import FootStepUtils from './mixins/FootStepUtils';
-//import BookmarksStorage from './mixins/BookmarksStorage';
 import FavIcon from './coms/FavIcon';
 
 
 export default {
   name: 'main',
   components: { FootmarkList, FootmarkButton, FavIcon },
-  mixins: [ FootStepUtils
-//    , BookmarksStorage
-   ],
+  mixins: [ FootStepUtils],
   props: {
   },
   data () {

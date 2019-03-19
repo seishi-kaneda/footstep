@@ -1,6 +1,10 @@
 import ChromeApiPromised from './ChromeApiPromised';
 import StorageAccess from './StorageAccess';
 
+import {Utils} from './Utils';
+import {Footmark} from './Types';
+import {Dailydata} from './Types';
+
 
 type QueryInfo = chrome.tabs.QueryInfo;
 type Tab = chrome.tabs.Tab;
@@ -16,10 +20,31 @@ chrome.runtime.onMessage.addListener(
   function(message: any, sender: MessageSender, sendResponse: any) {
 
     (async () => {
-       console.log("message:" + message)
-       sendResponse("sendResponse");
-     })();
-     return true; // keep the messaging channel open for sendResponse
+      switch (message.eventType) {
+        case "getDailyListForDays": {
+          const startYmd:string = message.params.startYmd;
+          const dayCount:number = message.params.dayCount;
+          const dailydataList:Dailydata[] = await storageAccess.getDailyListForDays(startYmd, dayCount);
+          sendResponse(dailydataList);
+          break;
+        }
+        case "getDailyData": {
+          const ymd:string = message.params.ymd;
+          const dailydata:Dailydata = await storageAccess.getDailyData(ymd);
+          sendResponse(dailydata);
+          break;
+        }
+        case "stampFootmark": {
+          const footmark:Footmark = message.params.footmark;
+          const dailydata:Dailydata = await storageAccess.stampFootmark(footmark);
+          sendResponse(dailydata);
+          break;
+        }
+      }
+
+      console.log("message:" + message)
+    })();
+    return true; // keep the messaging channel open for sendResponse
   }
 );
 
