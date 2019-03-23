@@ -6,36 +6,44 @@ const STORAGE_KEY_YYMM_LIST: string = "STORAGE_KEY_YYMM_LIST";
 
 export default class StorageAccess {
 
-  private loadedYmdList: string[] = Array();
-
   public constructor() {
   }
 
-  public async init() {
+  public async getStoredYmdList(): Promise<string[]> {
     const ymdList:string[] = Array();
-    const yymmList:string[] = await this.getStorage("yymmList", Array());
+    const yymmList:string[] = await this.getStorage(STORAGE_KEY_YYMM_LIST, Array());
     for (let yymm of yymmList) {
-      const ddList:string[] = await this.getStorage("yymm", Array());
+      const ddList:string[] = await this.getStorage(yymm, Array());
       //todo ループより配列結合の関数
       for (let ymd of ddList) {
         ymdList.push(ymd);
       }
     }
-    this.loadedYmdList = ymdList;
+console.log("getStoredYmdList");
+console.dir(ymdList);
+    return ymdList;
   }
 
 
   private setStorage(key:string, value:any):Promise<void> {
     return new Promise<void>( (resolve) => {
-      chrome.storage.local.set({key: value}, () => resolve());
+      const param:any = new Object();
+      param[key] = value;
+      chrome.storage.local.set(param, () => resolve());
     });
   }
 
   private getStorage(key:string, def:any):Promise<any> {
     return new Promise<any>( (resolve) => {
-      chrome.storage.local.get(key, (tmp_item:any|undefined) => {
-        const item:any = tmp_item==undefined ? def : tmp_item;
-        resolve(item);
+      const keys:any = new Object();
+      keys[key] = def;
+      chrome.storage.local.get(keys, (items:any) => {
+console.log("getStorage key:" + key);
+console.dir(items);
+
+
+        // const item:any = tmp_item==undefined ? def : tmp_item;
+        resolve(items[key]);
       });
     });
   }
@@ -43,7 +51,8 @@ export default class StorageAccess {
   public async saveDailydata(dailydata:Dailydata) {
 
     //ymd登録処理
-    if (!Utils.isContain(this.loadedYmdList, dailydata.ymd)) {
+    const ymdList = await this.getStoredYmdList();
+    if (!Utils.isContain(ymdList, dailydata.ymd)) {
       //未登録ymdの場合
       const yymmList:string[] = await this.getStorage(STORAGE_KEY_YYMM_LIST, Array());
       const yymm:string = dailydata.ymd.substring(0, 6);
@@ -70,13 +79,6 @@ export default class StorageAccess {
         await this.setStorage(yymm, ymdListInYYMM);
       }
 
-      //新しいyymmddを保持
-      this.loadedYmdList.push(dailydata.ymd);
-      //降順ソート
-      this.loadedYmdList.sort(function(a:string, b:string) {
-        return parseInt(b) - parseInt(a);
-      });
-
     } else {
       //登録済みymdの場合
     }
@@ -87,15 +89,14 @@ export default class StorageAccess {
   }
 
   public async getDailyData(ymd: string):Promise<Dailydata> {
-    const def = new Dailydata(ymd);
-    const todayData:Dailydata = await this.getStorage(ymd, def);
+    const todayData:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
     return todayData;
   }
 
   public async getDailyListForDays(startYmd: string, dayCount: number): Promise<Dailydata[]> {
-
     const dailydataList:Dailydata[] = new Array();
-    for (let ymd of this.loadedYmdList) {
+    const ymdList = await this.getStoredYmdList();
+    for (let ymd of ymdList) {
       if (startYmd >= ymd) {
         const dailyData:Dailydata = await this.getDailyData(ymd);
         if (dailyData.footmarks.length > 0) {
@@ -110,10 +111,12 @@ export default class StorageAccess {
   }
 
   public async stampFootmark(footmark:Footmark): Promise<Dailydata> {
+console.log("stampFootmark 1");
     const today:Date = new Date();
     const todayYmd:string = Utils.getYmd(today);
     const todayData:Dailydata = await this.getDailyData(todayYmd);
-
+    console.log("stampFootmark 2");
+console.dir(todayData);
     //今日データに同じurlのfootmarkが無いか検索
     let sameFootmark:Footmark|undefined = undefined;
     for (let f of todayData.footmarks) {
@@ -125,7 +128,17 @@ export default class StorageAccess {
 
     if (sameFootmark == undefined) {
       //今日同じデータが無い場合、footmark新規作成
-      todayData.footmarks.push(footmark);
+      const newFootmark :Footmark = {
+        'ymd': todayYmd,
+        'url': footmark.url,
+        'title': footmark.title,
+        'originTitle': footmark.originTitle,
+        'stampCount': 1,
+        'faviconUrl': footmark.faviconUrl,
+        'dateAdded': today.getTime()
+      }
+
+      todayData.footmarks.push(newFootmark);
       await this.saveDailydata(todayData);
     } else {
       //今日同じデータがある場合、スタンプ回数を更新

@@ -1,10 +1,12 @@
 <template>
-<!--
   <div id="options">
-    <button @click="clearAll">保存データクリア</button>
-    <button @click="openNewTab">タブで開く</button>
+    <button @click="viewStorage">保存データ　確認</button>
+    <button @click="clearAll">保存データ　クリア</button>
+
 <br>
+<!--
 <br>
+<button @click="openNewTab">タブで開く</button>
     <button @click="btExport">エクスポート</button>
     <button @click="btImport">インポート</button>
     <input @change="btFileSelector" id="fileSelector" type="file" style="display: none">
@@ -18,9 +20,9 @@
 <br>
 <button @click="testFunc">test</button>
 
+-->
 
   </div>
--->
 </template>
 
 <script>
@@ -37,8 +39,15 @@ export default {
     }
   },
   methods: {
+    viewStorage: function() {
+      console.log("viewStorage 1");
+      chrome.storage.local.get(null, function (data) {
+        console.log("viewStorage 2");
+        console.info(data);
+      });
+    },
     clearAll: function() {
-      localStorage.clear();
+      chrome.storage.local.clear();
     },
     openNewTab: function() {
       chrome.tabs.create({url: "index.html"});

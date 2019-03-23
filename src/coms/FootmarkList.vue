@@ -55,7 +55,7 @@ export default {
   },
   async mounted () {
     const todayYmd = this.getYmd(new Date());
-    this.dailydataList = await apiRuntimeSendMessage({
+    this.dailydataList = await this.apiRuntimeSendMessage({
       'eventType': 'getDailyListForDays',
       'params': {
         'start': todayYmd,
@@ -67,8 +67,13 @@ export default {
   },
   methods: {
     reloadToday: async function() {
+console.log("reloadToday");
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
+console.log("todayData");
+console.dir(todayData);
+
+
       let found = false;
       for (let i=0; i<this.dailydataList.length; i++) {
         if (this.dailydataList[i].ymd == todayYmd) {
@@ -90,6 +95,9 @@ export default {
           this.dailydataList.unshift(todayData);
         }
       }
+  console.log("dailydataList");
+  console.dir(this.dailydataList);
+
 
       this.updateCanStamp(this.dailydataList);
     },
@@ -151,6 +159,7 @@ export default {
       return hour + "時" + min + "分";
     },
     dateFormat : function(ymd) {
+      console.log("dateFormat ymd:" + ymd);
       const WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
       const y = parseInt(ymd.substring(0, 4));
       const m = parseInt(ymd.substring(4, 6));

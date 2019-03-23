@@ -43,12 +43,6 @@ export default {
     }
   },
   async mounted () {
-    console.log("mounted 0");
-    const res = await this.apiRuntimeSendMessage("apiRuntimeSendMessage");
-    console.log("mounted 1");
-    console.log("res:" + res);
-    console.log("mounted 2");
-
     const tab = await this.getCurrentTab();
     this.tabTitle = tab.title;
     this.tabFavIconUrl = tab.favIconUrl;
@@ -59,6 +53,7 @@ export default {
 
       const footmark = {
         'title':this.tabTitle,
+        'originTitle':this.tabTitle,
         'url':this.tabUrl,
         'faviconUrl':this.tabFavIconUrl,
         'stampCount':1

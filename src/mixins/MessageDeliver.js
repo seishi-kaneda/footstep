@@ -1,9 +1,10 @@
+import ApiPromised from './ApiPromised';
 
 export default {
   mixins: [ ApiPromised ],
   methods: {
     getDailyListForDays: async function(startYmd, dayCount) {
-      return await apiRuntimeSendMessage({
+      return await this.apiRuntimeSendMessage({
             'eventType': 'getDailyListForDays',
             'params': {
               'startYmd': startYmd,
@@ -13,7 +14,7 @@ export default {
         );
     },
     getDailyData: async function(ymd) {
-      return await apiRuntimeSendMessage({
+      return await this.apiRuntimeSendMessage({
             'eventType': 'getDailyData',
             'params': {
               'start': ymd
@@ -22,7 +23,7 @@ export default {
         );
     },
     stampFootmark: async function(footmark) {
-      return await apiRuntimeSendMessage({
+      return await this.apiRuntimeSendMessage({
             'eventType': 'stampFootmark',
             'params': {
               'footmark': footmark

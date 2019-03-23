@@ -12,16 +12,16 @@ type TabActiveInfo = chrome.tabs.TabActiveInfo;
 type MessageSender = chrome.runtime.MessageSender;
 
 
-const storageAccess: StorageAccess = new StorageAccess();
-storageAccess.init();
-
-
 chrome.runtime.onMessage.addListener(
   function(message: any, sender: MessageSender, sendResponse: any) {
 
     (async () => {
+
+      const storageAccess: StorageAccess = new StorageAccess();
+
       switch (message.eventType) {
         case "getDailyListForDays": {
+          console.log("bg.getDailyListForDays");
           const startYmd:string = message.params.startYmd;
           const dayCount:number = message.params.dayCount;
           const dailydataList:Dailydata[] = await storageAccess.getDailyListForDays(startYmd, dayCount);
@@ -29,12 +29,14 @@ chrome.runtime.onMessage.addListener(
           break;
         }
         case "getDailyData": {
+          console.log("bg.getDailyData");
           const ymd:string = message.params.ymd;
           const dailydata:Dailydata = await storageAccess.getDailyData(ymd);
           sendResponse(dailydata);
           break;
         }
         case "stampFootmark": {
+          console.log("bg.stampFootmark");
           const footmark:Footmark = message.params.footmark;
           const dailydata:Dailydata = await storageAccess.stampFootmark(footmark);
           sendResponse(dailydata);
@@ -51,7 +53,7 @@ chrome.runtime.onMessage.addListener(
 
 // タブが切り替わった時のイベント
 chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
-  console.dir(tab);
+//  console.dir(tab);
 
   // const queryInfo:QueryInfo = {
   //   active: true,
@@ -63,14 +65,14 @@ chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
 
 // タブが更新された時のイベント
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    console.log("onUpdated " + tab.url); // → 更新されたURL
-    console.log(info.status); //→ loading,complete
+    // console.log("onUpdated " + tab.url); // → 更新されたURL
+    // console.log(info.status); //→ loading,complete
 //    chrome.tabs.remove(tabId); // 更新されたタブのidを削除
 });
 
 
 chrome.windows.onFocusChanged.addListener(function (windowId:number) {
-  console.log("onFocusChanged " + windowId);
+//  console.log("onFocusChanged " + windowId);
 
 //  chrome.windows.getCurrent(object getInfo, function callback)
 });
