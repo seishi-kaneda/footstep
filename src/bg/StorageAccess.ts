@@ -92,10 +92,10 @@ console.dir(items);
   }
 
   public async getDailyData(ymd: string):Promise<Dailydata> {
-    const todayData:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
+    const dailydata:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
 console.log("getDailyData " + ymd);
-console.dir(todayData);
-    return todayData;
+console.dir(dailydata);
+    return dailydata;
   }
 
   public async getDailyListForDays(startYmd: string, dayCount: number): Promise<Dailydata[]> {

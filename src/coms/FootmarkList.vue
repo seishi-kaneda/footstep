@@ -40,7 +40,7 @@ import MessageDeliver from '../mixins/MessageDeliver';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
-const MaxStampCount = 1;
+const MaxStampCount = 4;
 
 export default {
   name: 'FootmarkList',

@@ -8,10 +8,10 @@
       <tr>
         <td class="footmark_time"></td>
         <td class="footmark_favicon">
-          <FavIcon v-bind:iconUrl='tabFavIconUrl' />
+          <FavIcon v-bind:iconUrl='pageFavIconUrl' />
         </td>
         <td class="footmark_title">
-          <input class="input_title" v-model="tabTitle">
+          <input class="input_title" v-model="inputTitle">
         </td>
         <td class="footmark_stamp">
           <FootmarkButton @click="clickNewMark" />
@@ -37,25 +37,27 @@ export default {
   },
   data () {
     return {
-      tabTitle: "",
-      tabUrl: "",
-      tabFavIconUrl: undefined
+      inputTitle: "",
+      pageTitle: "",
+      pageFavIconUrl: "",
+      pageUrl: ""
     }
   },
   async mounted () {
     const tab = await this.getCurrentTab();
-    this.tabTitle = tab.title;
-    this.tabFavIconUrl = tab.favIconUrl;
-    this.tabUrl = tab.url;
+    this.inputTitle = tab.title;
+    this.pageTitle = tab.title;
+    this.pageFavIconUrl = tab.favIconUrl;
+    this.pageUrl = tab.url;
 },
   methods: {
     clickNewMark: async function () {
 
       const footmark = {
-        'title':this.tabTitle,
-        'originTitle':this.tabTitle,
-        'url':this.tabUrl,
-        'faviconUrl':this.tabFavIconUrl,
+        'title':this.inputTitle,
+        'originTitle':this.pageTitle,
+        'url':this.pageUrl,
+        'faviconUrl':this.pageUrl,
         'stampCount':1
       };
       //作成

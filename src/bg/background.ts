@@ -56,6 +56,8 @@ console.dir(dailydataList);
 
 // タブが切り替わった時のイベント
 chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
+  changeIcon();
+//  changeIcon(tab.url);
 //  console.dir(tab);
 
   // const queryInfo:QueryInfo = {
@@ -67,15 +69,55 @@ chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
 });
 
 // タブが更新された時のイベント
-chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+chrome.tabs.onUpdated.addListener(async function (tabId: number, info: any, tab: Tab) {
+  changeIcon();
+
+//  changeIcon(tab.url);
     // console.log("onUpdated " + tab.url); // → 更新されたURL
     // console.log(info.status); //→ loading,complete
 //    chrome.tabs.remove(tabId); // 更新されたタブのidを削除
 });
 
 
-chrome.windows.onFocusChanged.addListener(function (windowId:number) {
+chrome.windows.onFocusChanged.addListener(async function (windowId:number) {
+  changeIcon();
 //  console.log("onFocusChanged " + windowId);
 
 //  chrome.windows.getCurrent(object getInfo, function callback)
 });
+
+async function changeIcon() {
+
+  const storageAccess: StorageAccess = new StorageAccess();
+  const today:Date = new Date();
+  const todayYmd:string = Utils.getYmd(today);
+  const todayData:Dailydata = await storageAccess.getDailyData(todayYmd);
+  const currentTab:Tab = await getCurrentTab();
+
+  let isToday: boolean = false;
+  for (let f of todayData.footmarks) {
+    if (currentTab.url == f.url) {
+      isToday = true;
+      break;
+    }
+  }
+
+  if (isToday) {
+    chrome.browserAction.setIcon({path:"images/footmark_cat_red1_48.png"});
+  } else {
+    chrome.browserAction.setIcon({path:"images/shironuki_48.png"});
+  }
+}
+
+
+async function getCurrentTab():Promise<Tab> {
+  return new Promise<Tab>( (resolve) => {
+    const queryInfo: QueryInfo = {
+      active: true,
+      currentWindow: true
+    };
+    chrome.tabs.query(queryInfo, (tabs: Tab[]) => {
+      resolve(tabs[0])
+    });
+  });
+}
