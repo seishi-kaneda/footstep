@@ -8,7 +8,7 @@
             <b>{{ dateFormat(dailyData.ymd) }}</b>
           </td>
         </tr>
-        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarkList">
+        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarks">
           <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
           <td class="footmark_favicon">
             <FavIcon v-bind:iconUrl='item.faviconUrl' />
@@ -36,6 +36,7 @@
 <script>
 
 import FootStepUtils from '../mixins/FootStepUtils';
+import MessageDeliver from '../mixins/MessageDeliver';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
@@ -43,7 +44,7 @@ const MaxStampCount = 1;
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils ],
+  mixins: [ FootStepUtils, MessageDeliver ],
   components: { FootmarkButton, FavIcon },
   props: {
   },
@@ -55,13 +56,9 @@ export default {
   },
   async mounted () {
     const todayYmd = this.getYmd(new Date());
-    this.dailydataList = await this.apiRuntimeSendMessage({
-      'eventType': 'getDailyListForDays',
-      'params': {
-        'start': todayYmd,
-        'days': 2
-      },
-    });
+    this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
+console.log("mounted dailydataList");
+console.dir(this.dailydataList);
 
     this.updateCanStamp(this.dailydataList);
   },
@@ -70,9 +67,8 @@ export default {
 console.log("reloadToday");
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
-console.log("todayData");
+console.log("reloadToday todayData");
 console.dir(todayData);
-
 
       let found = false;
       for (let i=0; i<this.dailydataList.length; i++) {
@@ -95,7 +91,7 @@ console.dir(todayData);
           this.dailydataList.unshift(todayData);
         }
       }
-  console.log("dailydataList");
+  console.log("reloadToday dailydataList");
   console.dir(this.dailydataList);
 
 
@@ -113,7 +109,7 @@ console.dir(todayData);
 
       const todayUrlMap = [];
       if (todayData != undefined) {
-        for (let footmark of todayData.footmarkList) {
+        for (let footmark of todayData.footmarks) {
 //          this.todayUrlMap.splice(footmark.url, 1, footmark);
 //          this.$set(this.todayUrlMap, footmark.url, footmark);
           todayUrlMap[footmark.url] = footmark;
@@ -121,7 +117,7 @@ console.dir(todayData);
       }
 
       for (let daily of dailyList) {
-        for (let footmark of daily.footmarkList) {
+        for (let footmark of daily.footmarks) {
 
           if (daily.ymd == todayYmd) {
             //今日
@@ -145,9 +141,11 @@ console.dir(todayData);
         }
       }
     },
-    stamp: async function(item) {
+    stamp: async function(footmark) {
       //スタンプ
-      const newFootmark = await this.stampFootmark(item);
+      const todayData = await this.stampFootmark(footmark);
+      console.log("stamp result");
+      console.dir(todayData);
       //今日データリロード
       await this.reloadToday();
 

@@ -3,7 +3,7 @@ import ApiPromised from './ApiPromised';
 export default {
   mixins: [ ApiPromised ],
   methods: {
-    getDailyListForDays: async function(startYmd, dayCount) {
+    getDailyListForDays: async function(startYmd, days) {
       return await this.apiRuntimeSendMessage({
             'eventType': 'getDailyListForDays',
             'params': {
@@ -17,7 +17,7 @@ export default {
       return await this.apiRuntimeSendMessage({
             'eventType': 'getDailyData',
             'params': {
-              'start': ymd
+              'ymd': ymd
             }
           }
         );

@@ -26,6 +26,9 @@ chrome.runtime.onMessage.addListener(
           const dayCount:number = message.params.dayCount;
           const dailydataList:Dailydata[] = await storageAccess.getDailyListForDays(startYmd, dayCount);
           sendResponse(dailydataList);
+console.log("bg sendResponse  dailydataList");
+console.dir(dailydataList);
+
           break;
         }
         case "getDailyData": {

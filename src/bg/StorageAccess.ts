@@ -12,6 +12,9 @@ export default class StorageAccess {
   public async getStoredYmdList(): Promise<string[]> {
     const ymdList:string[] = Array();
     const yymmList:string[] = await this.getStorage(STORAGE_KEY_YYMM_LIST, Array());
+console.log("bg getStoredYmdList yymmList");
+console.dir(yymmList);
+
     for (let yymm of yymmList) {
       const ddList:string[] = await this.getStorage(yymm, Array());
       //todo ループより配列結合の関数
@@ -90,12 +93,17 @@ console.dir(items);
 
   public async getDailyData(ymd: string):Promise<Dailydata> {
     const todayData:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
+console.log("getDailyData " + ymd);
+console.dir(todayData);
     return todayData;
   }
 
   public async getDailyListForDays(startYmd: string, dayCount: number): Promise<Dailydata[]> {
     const dailydataList:Dailydata[] = new Array();
     const ymdList = await this.getStoredYmdList();
+    console.log("bg getDailyListForDays ymdList");
+    console.dir(ymdList);
+
     for (let ymd of ymdList) {
       if (startYmd >= ymd) {
         const dailyData:Dailydata = await this.getDailyData(ymd);
