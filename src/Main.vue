@@ -1,8 +1,10 @@
 <template>
   <div id="main">
+<!--
     <div id="header">
       <a class="method" href="options.html">設定</a>
     </div>
+-->
     <div class="maintitle">Footstep</div>
 
     <table class="footmark_table">

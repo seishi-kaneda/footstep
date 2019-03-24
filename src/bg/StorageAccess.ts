@@ -12,9 +12,6 @@ export default class StorageAccess {
   public async getStoredYmdList(): Promise<string[]> {
     const ymdList:string[] = Array();
     const yymmList:string[] = await this.getStorage(STORAGE_KEY_YYMM_LIST, Array());
-console.log("bg getStoredYmdList yymmList");
-console.dir(yymmList);
-
     for (let yymm of yymmList) {
       const ddList:string[] = await this.getStorage(yymm, Array());
       //todo ループより配列結合の関数
@@ -22,8 +19,6 @@ console.dir(yymmList);
         ymdList.push(ymd);
       }
     }
-console.log("getStoredYmdList");
-console.dir(ymdList);
     return ymdList;
   }
 
@@ -41,10 +36,6 @@ console.dir(ymdList);
       const keys:any = new Object();
       keys[key] = def;
       chrome.storage.local.get(keys, (items:any) => {
-console.log("getStorage key:" + key);
-console.dir(items);
-
-
         // const item:any = tmp_item==undefined ? def : tmp_item;
         resolve(items[key]);
       });
@@ -93,17 +84,12 @@ console.dir(items);
 
   public async getDailyData(ymd: string):Promise<Dailydata> {
     const dailydata:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
-console.log("getDailyData " + ymd);
-console.dir(dailydata);
     return dailydata;
   }
 
   public async getDailyListForDays(startYmd: string, dayCount: number): Promise<Dailydata[]> {
     const dailydataList:Dailydata[] = new Array();
     const ymdList = await this.getStoredYmdList();
-    console.log("bg getDailyListForDays ymdList");
-    console.dir(ymdList);
-
     for (let ymd of ymdList) {
       if (startYmd >= ymd) {
         const dailyData:Dailydata = await this.getDailyData(ymd);
@@ -119,12 +105,9 @@ console.dir(dailydata);
   }
 
   public async stampFootmark(footmark:Footmark): Promise<Dailydata> {
-console.log("stampFootmark 1");
     const today:Date = new Date();
     const todayYmd:string = Utils.getYmd(today);
     const todayData:Dailydata = await this.getDailyData(todayYmd);
-    console.log("stampFootmark 2");
-console.dir(todayData);
     //今日データに同じurlのfootmarkが無いか検索
     let sameFootmark:Footmark|undefined = undefined;
     for (let f of todayData.footmarks) {

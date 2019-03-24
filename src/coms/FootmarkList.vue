@@ -62,18 +62,12 @@ export default {
   async mounted () {
     const todayYmd = this.getYmd(new Date());
     this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
-console.log("mounted dailydataList");
-console.dir(this.dailydataList);
-
     this.updateCanStamp(this.dailydataList);
   },
   methods: {
     reloadToday: async function() {
-console.log("reloadToday");
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
-console.log("reloadToday todayData");
-console.dir(todayData);
 
       let found = false;
       for (let i=0; i<this.dailydataList.length; i++) {
@@ -96,10 +90,6 @@ console.dir(todayData);
           this.dailydataList.unshift(todayData);
         }
       }
-  console.log("reloadToday dailydataList");
-  console.dir(this.dailydataList);
-
-
       this.updateCanStamp(this.dailydataList);
     },
     //スタンプボタンの可・不可を切り替え
@@ -149,8 +139,6 @@ console.dir(todayData);
     stamp: async function(footmark) {
       //スタンプ
       const todayData = await this.stampFootmark(footmark);
-      console.log("stamp result");
-      console.dir(todayData);
       //今日データリロード
       await this.reloadToday();
 
@@ -162,7 +150,6 @@ console.dir(todayData);
       return hour + "時" + min + "分";
     },
     dateFormat : function(ymd) {
-      console.log("dateFormat ymd:" + ymd);
       const WeekChars = [ "日", "月", "火", "水", "木", "金", "土"];
       const y = parseInt(ymd.substring(0, 4));
       const m = parseInt(ymd.substring(4, 6));

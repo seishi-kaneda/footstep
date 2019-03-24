@@ -21,33 +21,26 @@ chrome.runtime.onMessage.addListener(
 
       switch (message.eventType) {
         case "getDailyListForDays": {
-          console.log("bg.getDailyListForDays");
           const startYmd:string = message.params.startYmd;
           const dayCount:number = message.params.dayCount;
           const dailydataList:Dailydata[] = await storageAccess.getDailyListForDays(startYmd, dayCount);
           sendResponse(dailydataList);
-console.log("bg sendResponse  dailydataList");
-console.dir(dailydataList);
 
           break;
         }
         case "getDailyData": {
-          console.log("bg.getDailyData");
           const ymd:string = message.params.ymd;
           const dailydata:Dailydata = await storageAccess.getDailyData(ymd);
           sendResponse(dailydata);
           break;
         }
         case "stampFootmark": {
-          console.log("bg.stampFootmark");
           const footmark:Footmark = message.params.footmark;
           const dailydata:Dailydata = await storageAccess.stampFootmark(footmark);
           sendResponse(dailydata);
           break;
         }
       }
-
-      console.log("message:" + message)
     })();
     return true; // keep the messaging channel open for sendResponse
   }
@@ -57,28 +50,13 @@ console.dir(dailydataList);
 // タブが切り替わった時のイベント
 chrome.tabs.onActivated.addListener(async function (tab:TabActiveInfo) {
   changeIcon();
-//  changeIcon(tab.url);
-//  console.dir(tab);
-
-  // const queryInfo:QueryInfo = {
-  //   active: true,
-  //   currentWindow: true
-  // };
-  // const tabs:Tab[] = await new ChromeApiPromised().apiTabsQuery(queryInfo);
-  // console.log("apiTabsQuery " + tabs[0].url); // 切り替わったタブのURL
 });
 
 // タブが更新された時のイベント
 chrome.tabs.onUpdated.addListener(async function (tabId: number, info: any, tab: Tab) {
   changeIcon();
-
-//  changeIcon(tab.url);
-    // console.log("onUpdated " + tab.url); // → 更新されたURL
-    // console.log(info.status); //→ loading,complete
-//    chrome.tabs.remove(tabId); // 更新されたタブのidを削除
 });
-
-
+// windowが変更された時のイベント
 chrome.windows.onFocusChanged.addListener(async function (windowId:number) {
   changeIcon();
 });
