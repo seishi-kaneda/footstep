@@ -3,6 +3,7 @@
     <div id="header">
       <a class="method" href="options.html">設定</a>
     </div>
+    <div class="maintitle">Footstep</div>
 
     <table class="footmark_table">
       <tr>
@@ -76,19 +77,5 @@ export default {
 @import './styles/FootStepStyle.css';
 
 
-#main {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 0px;
-}
-
-#header {
-  text-align: right;
-  margin-bottom: 40px;
-  color: #2c3e50;
-}
 
 </style>

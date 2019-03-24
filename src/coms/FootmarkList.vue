@@ -1,28 +1,33 @@
 <template>
 
   <div class="list_div">
-    <table class="footmark_table">
-      <template v-for="dailyData in dailydataList">
-        <tr>
-          <td colspan="4" >
-            <b>{{ dateFormat(dailyData.ymd) }}</b>
-          </td>
-        </tr>
-        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarks">
-          <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
-          <td class="footmark_favicon">
-            <FavIcon v-bind:iconUrl='item.faviconUrl' />
-          </td>
-          <td class="footmark_title">
-            <p v-bind:class="linkStyle(item.stampCount)">
-              <a @click="linkFootmark(item)">{{ item.title }}</a>
-            </p>
-          </td>
-          <td class="footmark_stamp">
-            <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
-          </td>
-        </tr>
-      </template>
+    <template v-for="dailyData in dailydataList">
+      <div v-bind:class="dayboxStyle(dailyData.ymd)" >
+        <table class="footmark_table">
+          <tr>
+            <td colspan="4" >
+              <p class="datetitle">{{ dateFormat(dailyData.ymd) }}</p>
+            </td>
+          </tr>
+          <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarks">
+            <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
+            <td class="footmark_favicon">
+              <FavIcon v-bind:iconUrl='item.faviconUrl' />
+            </td>
+            <td class="footmark_title">
+              <p v-bind:class="linkStyle(item.stampCount)">
+                <a @click="linkFootmark(item)">{{ item.title }}</a>
+              </p>
+            </td>
+            <td class="footmark_stamp">
+              <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </template>
+
+    <table>
       <tr>
         <td colspan="4" >
           <a class="method" @click="showMore" v-show="showMoreVisible">続きを表示</a>
@@ -172,6 +177,14 @@ console.dir(todayData);
       const styles = ["link1", "link2", "link3", "link4", "link5"];
       return styles[count-1];
     },
+    dayboxStyle : function (ymd) {
+      const todayYmd = this.getYmd(new Date());
+      if (ymd ==todayYmd) {
+        return "todaybox";
+      } else {
+        return "daybox";
+      }
+    },
     showMore: async function () {
       //最後の日
       const lastYmd = this.dailydataList[this.dailydataList.length - 1].ymd;
@@ -208,6 +221,9 @@ div.list_div {
   height: 400px;
   overflow-y: scroll;
 }
+
+
+
 
 
 </style>

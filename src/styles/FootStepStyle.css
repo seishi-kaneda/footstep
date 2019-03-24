@@ -2,6 +2,7 @@
 
 body {
   min-width: 700px;
+  background: #FBFEFF;/*背景色*/
 }
 
 /** リンク系 */
@@ -15,6 +16,81 @@ a {
 a.method {
   color: #42b983;
 }
+
+
+#main {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 0px;
+}
+
+#header {
+  text-align: right;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+div.maintitle {
+  position: relative;
+  width:160px;
+  padding: 5px 5px 5px 42px;
+  background: #77c3df;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  margin-left: -10px;
+  margin-bottom: 20px;
+  line-height: 1.3;
+  z-index:-1;
+}
+
+div.maintitle:before {
+  position: absolute;
+  content: '';
+  left: -2px;
+  top: -2px;
+  border: none;
+  border-left: solid 40px white;
+  border-bottom: solid 79px transparent;
+  z-index:-2
+}
+
+/*
+p.maintitle {
+  font-size: 20px;
+  color: white;
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 1em;
+  background-color: #77c3df;
+}
+p.maintitle::before,
+p.maintitle::after {
+  content: '';
+  position: absolute;
+}
+p.maintitle::before {
+  top: 100%;
+  left: 0;
+  border-width: 0 15px 15px 0;
+  border-style: solid;
+  border-color: transparent;
+  border-right-color: #ccc;
+}
+p.maintitle::after {
+  top: 0;
+  right: 0;
+  z-index: 2;
+  border-width: 25px 20px;
+  border-style: solid;
+  border-color: transparent;
+  border-right-color: #fff;
+}
+*/
 
 
 input.input_title {
@@ -57,8 +133,28 @@ td.footmark_stamp {
   table-layout: fixed;
 }
 
+p.datetitle {
+  font-weight: bold;
+  font-size: 120%;
+}
 
+div.todaybox {
+    padding: 0.5em 1em;
+    margin: 2em 0;
+/*    color: #00BCD4; */
+    background: #e4fcff;/*背景色*/
+    border-top: solid 6px #1dc1d6;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.32);/*影*/
+}
 
+div.daybox {
+    padding: 0.5em 1em;
+    margin: 2em 0;
+/*    color: #00BCD4; */
+    background: #FBFEFF;/*背景色*/
+    border-top: solid 2px #1dc1d6;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.32);/*影*/
+}
 
 p.link1 {
   padding:0px;
