@@ -84,6 +84,11 @@ export default class StorageAccess {
 
   public async getDailyData(ymd: string):Promise<Dailydata> {
     const dailydata:Dailydata = await this.getStorage(ymd, new Dailydata(ymd));
+    //降順ソート
+    dailydata.footmarks.sort( function(a:Footmark, b:Footmark) {
+      return b.dateAdded - a.dateAdded;
+    });
+
     return dailydata;
   }
 
