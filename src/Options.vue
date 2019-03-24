@@ -1,10 +1,12 @@
 <template>
-<!--
   <div id="options">
-    <button @click="clearAll">保存データクリア</button>
-    <button @click="openNewTab">タブで開く</button>
+    <button @click="viewStorage">保存データ　確認</button>
+    <button @click="clearAll">保存データ　クリア</button>
+
 <br>
+<!--
 <br>
+<button @click="openNewTab">タブで開く</button>
     <button @click="btExport">エクスポート</button>
     <button @click="btImport">インポート</button>
     <input @change="btFileSelector" id="fileSelector" type="file" style="display: none">
@@ -18,9 +20,9 @@
 <br>
 <button @click="testFunc">test</button>
 
+-->
 
   </div>
--->
 </template>
 
 <script>
@@ -37,8 +39,12 @@ export default {
     }
   },
   methods: {
+    viewStorage: function() {
+      chrome.storage.local.get(null, function (data) {
+      });
+    },
     clearAll: function() {
-      localStorage.clear();
+      chrome.storage.local.clear();
     },
     openNewTab: function() {
       chrome.tabs.create({url: "index.html"});
@@ -145,19 +151,16 @@ export default {
         await chrome.bookmarks.create(
           {'parentId': footstepDirId, 'title': String(y)},
           async function(yearFolder) {
-            console.log('' + (Date.now() - startTime) + " 作成:" + y);
 
             for (let m=1; m<=12; m++) {
               await chrome.bookmarks.create(
                 {'parentId': yearFolder.id, 'title': String(m)},
                 async function(monthFolder) {
-                  console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m);
 
                   for (let d=1; d<=30; d++) {
                     await chrome.bookmarks.create(
                       {'parentId': monthFolder.id, 'title': String(d)},
                       async function(dayFolder) {
-                        console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d);
 
                         for (let i=1; i<=100; i++) {
                           await chrome.bookmarks.create(
@@ -165,7 +168,6 @@ export default {
                             'title': 'RGBと16進数カラーコードの相互変換ツール - PEKO STEP',
                             'url': 'https://stackoverflow.com/questions/10257301/where-to-read-console-messages-from-background-js-in-a-chrome-extension?arg=' + y + "." + m + "." + d + "." + i},
                             async function(obj) {
-//                              console.log('' + (Date.now() - startTime) +  " 作成:" + y + "." + m + "." + d + " " + i);
                             }
                           );
                         }
@@ -193,37 +195,11 @@ export default {
         const nodes1 = await this.apiBookmarksGetChildren(nodes0[i].id);
         for (let j=0; j<nodes1.length; j++) {
           if(nodes1[j].title == "Footstep") {
-            console.log("found!");
-            console.dir(nodes1[j]);
             break;
           }
         }
       }
       const end = new Date().getTime();
-      console.log("time:" + (end - start));
-
-      // const nodes = await this.apiBookmarksGetChildren();
-      //
-      // for (let i=0; i<nodes.length; i++) {
-      //   console.log("i:" + nodes[i].title);
-      // }
-
-      // const KeyFootstepFolderId = "KeyFootstepFolderId";
-      // const footstepDirId = localStorage.getItem(KeyFootstepFolderId);
-      //
-      // let long_title = "";
-      // for (let i=0; i<500; i++) {
-      //   long_title += "１２３４５６７８９０";
-      // }
-      //
-      // console.log("1");
-      //
-      // console.log("arg len:" + long_title.length);
-      // const node = {'parentId': footstepDirId, 'title': long_title, 'url': "https://www.yahoo.co.jp/"};
-      // const ret = await this.apiBookmarksCreate(node);
-      // console.log("ret url:" + ret.url);
-      // console.log("ret len:" + ret.title.length);
-      // console.log("4");
     }
 
   }
