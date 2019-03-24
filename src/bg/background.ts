@@ -81,9 +81,6 @@ chrome.tabs.onUpdated.addListener(async function (tabId: number, info: any, tab:
 
 chrome.windows.onFocusChanged.addListener(async function (windowId:number) {
   changeIcon();
-//  console.log("onFocusChanged " + windowId);
-
-//  chrome.windows.getCurrent(object getInfo, function callback)
 });
 
 async function changeIcon() {
@@ -93,6 +90,9 @@ async function changeIcon() {
   const todayYmd:string = Utils.getYmd(today);
   const todayData:Dailydata = await storageAccess.getDailyData(todayYmd);
   const currentTab:Tab = await getCurrentTab();
+  if (currentTab == undefined) {
+    return;
+  }
 
   let isToday: boolean = false;
   for (let f of todayData.footmarks) {
