@@ -1,16 +1,8 @@
 import ApiPromised from './ApiPromised';
-
-
-const ExportFileHeader = "FootStep LocalStrage Data.";
-
-const KeyFootstepFolderId = "KeyFootstepFolderId";
-
-const MaxStampCount = 4;
-
-const TitleSplitChar = '^';
+import MessageDeliver from './MessageDeliver';
 
 export default {
-  mixins: [ ApiPromised ],
+  mixins: [ ApiPromised, MessageDeliver ],
   methods: {
     getCurrentTab : async function(callback) {
       const queryInfo = {
