@@ -1,28 +1,33 @@
 <template>
 
   <div class="list_div">
-    <table class="footmark_table">
-      <template v-for="dailyData in dailydataList">
-        <tr>
-          <td colspan="4" >
-            <b>{{ dateFormat(dailyData.ymd) }}</b>
-          </td>
-        </tr>
-        <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarkList">
-          <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
-          <td class="footmark_favicon">
-            <FavIcon v-bind:iconUrl='item.faviconUrl' />
-          </td>
-          <td class="footmark_title">
-            <p v-bind:class="linkStyle(item.stampCount)">
-              <a @click="linkFootmark(item)">{{ item.title }}</a>
-            </p>
-          </td>
-          <td class="footmark_stamp">
-            <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
-          </td>
-        </tr>
-      </template>
+    <template v-for="dailyData in dailydataList">
+      <div v-bind:class="dayboxStyle(dailyData.ymd)" >
+        <table class="footmark_table">
+          <tr>
+            <td colspan="4" >
+              <p class="datetitle">{{ dateFormat(dailyData.ymd) }}</p>
+            </td>
+          </tr>
+          <tr class="footmark_row" v-for="(item, item_index) in dailyData.footmarks">
+            <td class="footmark_time">{{ timeFormat(item.dateAdded) }}</td>
+            <td class="footmark_favicon">
+              <FavIcon v-bind:iconUrl='item.faviconUrl' />
+            </td>
+            <td class="footmark_title">
+              <p v-bind:class="linkStyle(item.stampCount)">
+                <a @click="linkFootmark(item)">{{ item.title }}</a>
+              </p>
+            </td>
+            <td class="footmark_stamp">
+              <FootmarkButton :enable="item.canStamp" @click="stamp(item)" />
+            </td>
+          </tr>
+        </table>
+      </div>
+    </template>
+
+    <table>
       <tr>
         <td colspan="4" >
           <a class="method" @click="showMore" v-show="showMoreVisible">続きを表示</a>
@@ -35,8 +40,8 @@
 
 <script>
 
-import BookmarksStorage from '../mixins/BookmarksStorage';
 import FootStepUtils from '../mixins/FootStepUtils';
+import MessageDeliver from '../mixins/MessageDeliver';
 import FootmarkButton from '../coms/FootmarkButton';
 import FavIcon from '../coms/FavIcon';
 
@@ -44,7 +49,7 @@ const MaxStampCount = 4;
 
 export default {
   name: 'FootmarkList',
-  mixins: [ FootStepUtils, BookmarksStorage ],
+  mixins: [ FootStepUtils, MessageDeliver ],
   components: { FootmarkButton, FavIcon },
   props: {
   },
@@ -63,6 +68,7 @@ export default {
     reloadToday: async function() {
       const todayYmd = this.getYmd(new Date());
       const todayData = await this.getDailyData(todayYmd);
+
       let found = false;
       for (let i=0; i<this.dailydataList.length; i++) {
         if (this.dailydataList[i].ymd == todayYmd) {
@@ -84,7 +90,6 @@ export default {
           this.dailydataList.unshift(todayData);
         }
       }
-
       this.updateCanStamp(this.dailydataList);
     },
     //スタンプボタンの可・不可を切り替え
@@ -99,7 +104,7 @@ export default {
 
       const todayUrlMap = [];
       if (todayData != undefined) {
-        for (let footmark of todayData.footmarkList) {
+        for (let footmark of todayData.footmarks) {
 //          this.todayUrlMap.splice(footmark.url, 1, footmark);
 //          this.$set(this.todayUrlMap, footmark.url, footmark);
           todayUrlMap[footmark.url] = footmark;
@@ -107,7 +112,7 @@ export default {
       }
 
       for (let daily of dailyList) {
-        for (let footmark of daily.footmarkList) {
+        for (let footmark of daily.footmarks) {
 
           if (daily.ymd == todayYmd) {
             //今日
@@ -131,9 +136,9 @@ export default {
         }
       }
     },
-    stamp: async function(item) {
+    stamp: async function(footmark) {
       //スタンプ
-      const newFootmark = await this.stampFootmark(item);
+      const todayData = await this.stampFootmark(footmark);
       //今日データリロード
       await this.reloadToday();
 
@@ -158,6 +163,14 @@ export default {
     linkStyle : function (count) {
       const styles = ["link1", "link2", "link3", "link4", "link5"];
       return styles[count-1];
+    },
+    dayboxStyle : function (ymd) {
+      const todayYmd = this.getYmd(new Date());
+      if (ymd ==todayYmd) {
+        return "todaybox";
+      } else {
+        return "daybox";
+      }
     },
     showMore: async function () {
       //最後の日
@@ -195,6 +208,9 @@ div.list_div {
   height: 400px;
   overflow-y: scroll;
 }
+
+
+
 
 
 </style>

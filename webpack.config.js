@@ -1,11 +1,16 @@
+const { VueLoaderPlugin } = require("vue-loader");
+
 var path = require('path')
 var webpack = require('webpack')
 
 module.exports = {
   watch: true,
+  mode: 'production',
+  plugins: [new VueLoaderPlugin()],
   entry: {
     main: './src/main.js',
-    options: './src/options.js'
+    options: './src/options.js',
+    background: './src/bg/background.ts'
   },
   output: {
     path: path.resolve(__dirname, './extension/dist'),
@@ -20,7 +25,8 @@ module.exports = {
           'vue-style-loader',
           'css-loader'
         ],
-      },      {
+      },
+      {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
@@ -32,6 +38,25 @@ module.exports = {
       {
         test: /\.js$/,
         loader: 'babel-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.ts?$/,
+        use: [
+          // 下から順に処理される
+          { loader: "babel-loader" },
+          { loader: "ts-loader" },
+          {
+            loader: 'tslint-loader',
+            options: {
+              typeCheck: true,
+              // tslint時に自動的に修正しない
+              fix: false,
+              // warningをエラーにすることでその後のビルドを止める
+              emitErrors: true
+            },
+          },
+        ],
         exclude: /node_modules/
       },
       {
@@ -51,7 +76,7 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
     },
-    extensions: ['*', '.js', '.vue', '.json']
+    extensions: ['*', '.js', '.vue', '.json', '.ts']
   },
   devServer: {
     historyApiFallback: true,
@@ -71,12 +96,6 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"'
-      }
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: true,
-      compress: {
-        warnings: false
       }
     }),
     new webpack.LoaderOptionsPlugin({

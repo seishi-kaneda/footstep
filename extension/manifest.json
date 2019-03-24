@@ -1,22 +1,21 @@
 {
   "name": "Footstep",
-  "description": "Test Version. This is a support extension for your daily work.",
-  "version": "1.1.1",
+  "description": "This is a support extension for your daily work.",
+  "version": "1.3",
   "manifest_version": 2,
-  "permissions": ["tabs", "bookmarks"],
+  "permissions": ["tabs", "bookmarks", "storage", "unlimitedStorage"],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["dist/background.js"],
     "persistent": false
   },
   "browser_action": {
     "default_icon": {
-      "48": "images/footmark_cat_red1_48.png"
+      "48": "images/shironuki_48.png"
     },
     "default_title": "Footstep",
     "default_popup": "main.html"
   },
   "icons": {
     "48": "images/footmark_cat_red1_48.png"
-  },
-  "options_page": "options.html"
+  }
 }
