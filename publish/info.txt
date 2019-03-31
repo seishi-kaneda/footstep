@@ -1,8 +1,24 @@
 [description]
-Test Version.
-Developing now.
+# 概要
+- 日々の業務で、多くのページにアクセスする必要があるが、ブックマークの整理が追いつかない・・。そんな課題を解決する１つのアプローチ。
+- 「最近チェックしたページは、今日も利用する可能性が高い」という経験則を元に、フォルダ整理ではなく 時系列を重視したurlメモ
+- クラウドなど利用できない業務での利用を想定してます。外部送信など行なっておりません。
 
+# 機能
+気に入ったwebページを、フットマーク(足跡) として保存する。
+
+# 利用
+特に利用制限はありません。 商用利用可能です。
+
+# 意見・要望
+gitのissue または 作者のTwitter
+
+
+# リンク
+開発者：https://twitter.com/kanedaseishi
+github：https://github.com/seishi-kaneda/footstep
+website：https://github.com/seishi-kaneda/footstep/wiki
 
 
 [web site]
-https://github.com/seishi-kaneda/footstep
+https://github.com/seishi-kaneda/footstep/wiki
