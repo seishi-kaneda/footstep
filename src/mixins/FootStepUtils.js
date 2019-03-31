@@ -37,6 +37,14 @@ export default {
       var dt = new Date(y, m, d);
 
       return (y == dt.getFullYear() && m == dt.getMonth() && d == dt.getDate());
+    },
+    logtime : function(str){
+      const d = new Date();
+      const hour = d.getHours();
+      const min  = d.getMinutes();
+      const sec = d.getSeconds();
+      const ms = d.getMilliseconds();
+      console.log("" + hour + ":" + min + ":" + sec + "." + ms + " " + str);
     }
   }
 }

@@ -60,9 +60,15 @@ export default {
     }
   },
   async created () {
+    this.logtime("FootmarkList.created start");
     const todayYmd = this.getYmd(new Date());
     this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
     this.updateCanStamp(this.dailydataList);
+    this.logtime("FootmarkList.created end");
+  },
+  mounted () {
+    this.logtime("FootmarkList.mounted start");
+    this.logtime("FootmarkList.mounted end");
   },
   methods: {
     reloadToday: async function() {

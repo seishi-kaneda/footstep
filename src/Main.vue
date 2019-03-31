@@ -47,12 +47,19 @@ export default {
     }
   },
   created () {
+    this.logtime("Main.created start");
     this.getCurrentTab().then((tab) => {
       this.inputTitle = tab.title;
       this.pageTitle = tab.title;
       this.pageFavIconUrl = tab.favIconUrl;
       this.pageUrl = tab.url;
+      this.logtime("Main.getCurrentTab end");
     });
+    this.logtime("Main.created end");
+  },
+  mounted () {
+    this.logtime("Main.mounted start");
+    this.logtime("Main.mounted end");
   },
   methods: {
     clickNewMark: async function () {
