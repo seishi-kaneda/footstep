@@ -41,6 +41,7 @@ export default {
   methods: {
     viewStorage: function() {
       chrome.storage.local.get(null, function (data) {
+        console.dir(data);
       });
     },
     clearAll: function() {

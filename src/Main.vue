@@ -60,7 +60,7 @@ export default {
         'title':this.inputTitle,
         'originTitle':this.pageTitle,
         'url':this.pageUrl,
-        'faviconUrl':this.pageUrl,
+        'faviconUrl':this.pageFavIconUrl,
         'stampCount':1
       };
       //作成
