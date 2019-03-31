@@ -37,6 +37,7 @@ chrome.runtime.onMessage.addListener(
         case "stampFootmark": {
           const footmark:Footmark = message.params.footmark;
           const dailydata:Dailydata = await storageAccess.stampFootmark(footmark);
+          changeIcon();
           sendResponse(dailydata);
           break;
         }
