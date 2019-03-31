@@ -59,7 +59,7 @@ export default {
       showMoreVisible: true
     }
   },
-  async mounted () {
+  async created () {
     const todayYmd = this.getYmd(new Date());
     this.dailydataList = await this.getDailyListForDays(todayYmd, 2);
     this.updateCanStamp(this.dailydataList);

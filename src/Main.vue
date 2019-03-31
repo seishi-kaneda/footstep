@@ -46,13 +46,14 @@ export default {
       pageUrl: ""
     }
   },
-  async mounted () {
-    const tab = await this.getCurrentTab();
-    this.inputTitle = tab.title;
-    this.pageTitle = tab.title;
-    this.pageFavIconUrl = tab.favIconUrl;
-    this.pageUrl = tab.url;
-},
+  created () {
+    this.getCurrentTab().then((tab) => {
+      this.inputTitle = tab.title;
+      this.pageTitle = tab.title;
+      this.pageFavIconUrl = tab.favIconUrl;
+      this.pageUrl = tab.url;
+    });
+  },
   methods: {
     clickNewMark: async function () {
 
